@@ -86,8 +86,6 @@ def main():
     start_game()
     # main loop
     flag = True
-    flag = True
-    flag = True
     while flag:
         start_game()
         inp = key.listen()
