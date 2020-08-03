@@ -21,7 +21,7 @@ class Board(object):
                 # check and update the status
                 if self.status[pos] == 1 or self.status[pos] == -1:
                     # notice that this character is chosen
-                    print("dont choose again")
+                    print("dont choose again!")
                     break
                 else:
                     if self.turnA:
