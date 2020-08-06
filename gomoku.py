@@ -72,73 +72,28 @@ class Board(object):
         for row in range(self.ROW):
             for col in range(self.COL):
                 if self.status[col][row] != 0:
-                    pass;
-                    # horizon (pos 0)
-                    row1 = row + dir[0][0]
-                    col1 = col + dir[0][1]
-                    times = 1
-                    while self.check_in_bound(col, row) and self.status[col][row] == self.status[col1][row1]:
-                        times += 1
-                        row1 = row1 + dir[0][0]
-                        col1 = col1 + dir[0][1]
-                    if (times == 5):
-                        if self.status[col][row] == 1:
-                            print("A wins")
-                        else:
-                            print("B wins")
-                        pygame.quit()
-                    # vert (pos 2)
-                    row1 = row + dir[2][0]
-                    col1 = col + dir[2][1]
-                    times = 1
-                    while self.check_in_bound(col, row) and self.status[col][row] == self.status[col1][row1]:
-                        times += 1
-                        row1 = row1 + dir[2][0]
-                        col1 = col1 + dir[2][1]
-                    if (times == 5):
-                        if self.status[col][row] == 1:
-                            print("A wins")
-                        else:
-                            print("B wins")
-                        pygame.time.delay(500)
-                        pygame.quit()
-                    # vert (pos 2)
+                    # all direction
+                    for direction in range(4):
+                        # begin
+                        row1 = row + dir[direction][1]
+                        col1 = col + dir[direction][0]
+                        times = 1
 
-                    # diag positive (pos 1)
+                        # count number of consecutive x/o
+                        while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
+                            times += 1
+                            row1 = row1 + dir[direction][1]
+                            col1 = col1 + dir[direction][0]
 
-                    # begin
-                    row1 = row + dir[1][1]
-                    col1 = col + dir[1][0]
-                    times = 1
+                        # check win
+                        if times == 5:
+                            if self.status[col][row] == 1:
+                                print("A wins")
+                            else:
+                                print("B wins")
 
-                    # count number of consecutive x/o
-                    while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
-                        times += 1
-                        row1 = row1 + dir[1][1]
-                        col1 = col1 + dir[1][0]
-
-                    # check win
-                    if times == 5:
-                        if self.status[col][row] == 1:
-                            print("A wins")
-                        else:
-                            print("B wins")
-                        pygame.quit()
-
-                    # diag negative (pos 3)
-                    row1 = row + dir[3][1]
-                    col1 = col + dir[3][0]
-                    times = 1
-                    while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
-                        times += 1
-                        row1 = row1 + dir[3][1]
-                        col1 = col1 + dir[3][0]
-                    if times == 5:
-                        if self.status[col][row] == 1:
-                            print("A wins")
-                        else:
-                            print("B wins")
-                        pygame.quit()
+                            return True
+        return False
 
 
 def startBoard():
@@ -174,12 +129,11 @@ def main():
     flag = True
 
     while flag:
-
         key.listen()
-
         redraw(frame)
-        key.check_win()
-
+        if key.check_win():
+            pygame.time.delay(500)
+            start_game()
 
 
 main()
