@@ -34,24 +34,24 @@ class Board(object):
         return ''
 
     def draw(self, surface):
-        global size, row, col, x_margin, y_margin
+        global size, ROW, COL, x_margin, y_margin
         size = 40
-        row = 15
-        col = 15
+        ROW = 15
+        COL = 15
         x_margin = 10
         y_margin = 10
         y = y_margin
-        for i in range(row + 1):
-            pygame.draw.line(surface, (255, 255, 255), (x_margin, y), (x_margin + 15 * size, y))
+        for i in range(ROW + 1):
+            pygame.draw.line(surface, (255, 255, 255), (x_margin, y), (x_margin + ROW * size, y))
             y = y + size
         x = x_margin
-        for j in range(col + 1):
-            pygame.draw.line(surface, (255, 255, 255), (x, y_margin), (x, y_margin + 15 * size))
+        for j in range(ROW + 1):
+            pygame.draw.line(surface, (255, 255, 255), (x, y_margin), (x, y_margin + COL * size))
             x = x + size
         #  draw characters in the square
         font = pygame.font.SysFont('arial', 40)
-        for k in range(15):
-            for l in range(15):
+        for k in range(ROW):
+            for l in range(COL):
                 if self.status[k][l] == 1:
                     text = font.render('x', True, (255, 0, 0))
                 elif self.status[k][l] == -1:
@@ -60,12 +60,15 @@ class Board(object):
                     text = font.render('o', True, (0, 0, 0))
                 surface.blit(text, (k * 40 + 20, l * 40))
 
+    def check_in_bound(self, x, y):
+        return 0 <= x < COL and 0 <= y < ROW
+
     def check_win(self):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
 
-        for row in range(15):
-            for col in range(15):
+        for row in range(ROW):
+            for col in range(COL):
                 if self.status[col][row] != 0:
                     pass;
                     # horizon (pos 0)
@@ -79,8 +82,9 @@ class Board(object):
 
 def startBoard():
     global iniStatus, key
+    # tim cach sua lai cai nay
     w, h = 15, 15;
-    iniStatus = [[0 for x in range(w)] for y in range(h)]
+    iniStatus = [[0 for x in range()] for y in range(h)]
     key = Board(iniStatus)
 
 def redraw(surface):
