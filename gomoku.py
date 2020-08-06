@@ -74,7 +74,34 @@ class Board(object):
                 if self.status[col][row] != 0:
                     pass;
                     # horizon (pos 0)
-
+                    row1 = row + dir[0][0]
+                    col1 = col + dir[0][1]
+                    times = 1
+                    while self.check_in_bound(col, row) and self.status[col][row] == self.status[col1][row1]:
+                        times += 1
+                        row1 = row1 + dir[0][0]
+                        col1 = col1 + dir[0][1]
+                    if (times == 5):
+                        if self.status[col][row] == 1:
+                            print("A wins")
+                        else:
+                            print("B wins")
+                        pygame.quit()
+                    # vert (pos 2)
+                    row1 = row + dir[2][0]
+                    col1 = col + dir[2][1]
+                    times = 1
+                    while self.check_in_bound(col, row) and self.status[col][row] == self.status[col1][row1]:
+                        times += 1
+                        row1 = row1 + dir[2][0]
+                        col1 = col1 + dir[2][1]
+                    if (times == 5):
+                        if self.status[col][row] == 1:
+                            print("A wins")
+                        else:
+                            print("B wins")
+                        pygame.time.delay(500)
+                        pygame.quit()
                     # vert (pos 2)
 
                     # diag positive (pos 1)
@@ -147,9 +174,12 @@ def main():
     flag = True
 
     while flag:
+
         key.listen()
-        key.check_win()
+
         redraw(frame)
+        key.check_win()
+
 
 
 main()
