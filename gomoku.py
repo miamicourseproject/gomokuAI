@@ -9,6 +9,7 @@ class Board(object):
         self.turnA = True
         self.turnB = False
         self.status = status
+
     def listen(self):  # listen to the user
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -31,6 +32,7 @@ class Board(object):
                         self.turnA = True
                         self.turnB = False
         return ''
+
     def draw(self, surface):
         global size, row, col, x_margin, y_margin
         size = 40
@@ -57,6 +59,23 @@ class Board(object):
                 else:
                     text = font.render('o', True, (0, 0, 0))
                 surface.blit(text, (k * 40 + 20, l * 40))
+
+    def check_win(self):
+        # direction
+        dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
+
+        for row in range(15):
+            for col in range(15):
+                if self.status[col][row] != 0:
+                    pass;
+                    # horizon (pos 0)
+
+                    # vert (pos 2)
+
+                    # diag + (pos 1)
+
+                    # diag - (pos 3)
+
 
 def startBoard():
     global iniStatus, key
