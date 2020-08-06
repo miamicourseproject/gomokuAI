@@ -4,11 +4,14 @@ import pygame
 import tkinter as tk
 from tkinter import messagebox
 
+
 class Board(object):
-    def __init__(self, status):
+    def __init__(self, status, ROW, COL):
         self.turnA = True
         self.turnB = False
         self.status = status
+        self.ROW = ROW
+        self.COL = COL
 
     def listen(self):  # listen to the user
         for event in pygame.event.get():
@@ -31,27 +34,25 @@ class Board(object):
                         self.status[col1][row1] = -1
                         self.turnA = True
                         self.turnB = False
-        return ''
 
     def draw(self, surface):
-        global size, ROW, COL, x_margin, y_margin
+        global size, x_margin, y_margin
+        # tim cach sua lai cai nay
         size = 40
-        ROW = 15
-        COL = 15
         x_margin = 10
         y_margin = 10
         y = y_margin
-        for i in range(ROW + 1):
-            pygame.draw.line(surface, (255, 255, 255), (x_margin, y), (x_margin + ROW * size, y))
+        for i in range(self.ROW + 1):
+            pygame.draw.line(surface, (255, 255, 255), (x_margin, y), (x_margin + self.ROW * size, y))
             y = y + size
         x = x_margin
-        for j in range(ROW + 1):
-            pygame.draw.line(surface, (255, 255, 255), (x, y_margin), (x, y_margin + COL * size))
+        for j in range(self.COL + 1):
+            pygame.draw.line(surface, (255, 255, 255), (x, y_margin), (x, y_margin + self.COL * size))
             x = x + size
         #  draw characters in the square
         font = pygame.font.SysFont('arial', 40)
-        for k in range(ROW):
-            for l in range(COL):
+        for k in range(self.ROW):
+            for l in range(self.COL):
                 if self.status[k][l] == 1:
                     text = font.render('x', True, (255, 0, 0))
                 elif self.status[k][l] == -1:
@@ -61,43 +62,79 @@ class Board(object):
                 surface.blit(text, (k * 40 + 20, l * 40))
 
     def check_in_bound(self, x, y):
-        return 0 <= x < COL and 0 <= y < ROW
+        return 0 <= x < self.COL and 0 <= y < self.ROW
 
     def check_win(self):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
+        # (col, row)
 
-        for row in range(ROW):
-            for col in range(COL):
+        for row in range(self.ROW):
+            for col in range(self.COL):
                 if self.status[col][row] != 0:
                     pass;
                     # horizon (pos 0)
 
                     # vert (pos 2)
 
-                    # diag + (pos 1)
+                    # diag positive (pos 1)
 
-                    # diag - (pos 3)
+                    # begin
+                    row1 = row + dir[1][1]
+                    col1 = col + dir[1][0]
+                    times = 1
+
+                    # count number of consecutive x/o
+                    while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
+                        times += 1
+                        row1 = row1 + dir[1][1]
+                        col1 = col1 + dir[1][0]
+
+                    # check win
+                    if times == 5:
+                        if self.status[col][row] == 1:
+                            print("A wins")
+                        else:
+                            print("B wins")
+                        pygame.quit()
+
+                    # diag negative (pos 3)
+                    row1 = row + dir[3][1]
+                    col1 = col + dir[3][0]
+                    times = 1
+                    while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
+                        times += 1
+                        row1 = row1 + dir[3][1]
+                        col1 = col1 + dir[3][0]
+                    if times == 5:
+                        if self.status[col][row] == 1:
+                            print("A wins")
+                        else:
+                            print("B wins")
+                        pygame.quit()
 
 
 def startBoard():
     global iniStatus, key
-    # tim cach sua lai cai nay
-    w, h = 15, 15;
-    iniStatus = [[0 for x in range()] for y in range(h)]
-    key = Board(iniStatus)
+    iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
+    key = Board(iniStatus, ROW, COL)
+
 
 def redraw(surface):
     surface.fill((0, 0, 0))
     key.draw(surface)
     pygame.display.update()
 
+
 def start_game():
     startBoard()
 
+
 def main():
     # prepare
-    global width, height,score
+    global width, height, score, ROW, COL
+    ROW = 15
+    COL = 15
     score = 0
     pygame.init()
     width = 650
@@ -108,9 +145,11 @@ def main():
     start_game()
     # main loop
     flag = True
-    start_game()
+
     while flag:
-        inp = key.listen()
+        key.listen()
+        key.check_win()
         redraw(frame)
+
 
 main()
