@@ -16,20 +16,18 @@ class Board(object):
             if pygame.mouse.get_pressed()[0]:
                 col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
                 row1 = (pygame.mouse.get_pos()[1] - y_margin) // size
-                # get the position of the square in the 3x9 rectangle
-                pos = row1 * col + col1
                 # check and update the status
-                if self.status[pos] == 1 or self.status[pos] == -1:
+                if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
                     # notice that this character is chosen
                     print("dont choose again!")
                     break
                 else:
                     if self.turnA:
-                        self.status[pos] = 1
+                        self.status[col1][row1] = 1
                         self.turnA = False
                         self.turnB = True
                     else:
-                        self.status[pos] = -1
+                        self.status[col1][row1] = -1
                         self.turnA = True
                         self.turnB = False
         return ''
@@ -49,21 +47,22 @@ class Board(object):
             pygame.draw.line(surface, (255, 255, 255), (x, y_margin), (x, y_margin + 15 * size))
             x = x + size
         #  draw characters in the square
-        font = pygame.font.SysFont('arial', 25)
-        for k in range(225):
-            if self.status[k] == 1:
-                text = font.render('x', True, (255, 0, 0))
-            elif self.status[k] == -1:
-                text = font.render('o', True, (255, 0, 0))
-            else:
-                text = font.render('o', True, (0, 0, 0))
-            rowk = k//15 + 1
-            colk = k%15
-            surface.blit(text, (colk*40, rowk*40))
+        font = pygame.font.SysFont('arial', 40)
+        for k in range(15):
+            for l in range(15):
+                if self.status[k][l] == 1:
+                    text = font.render('x', True, (255, 0, 0))
+                elif self.status[k][l] == -1:
+                    text = font.render('o', True, (255, 0, 0))
+                else:
+                    text = font.render('o', True, (0, 0, 0))
+                surface.blit(text, (k * 40 + 20, l * 40))
 
 def startBoard():
-    global key
-    key = Board([0] * 225)
+    global iniStatus, key
+    w, h = 15, 15;
+    iniStatus = [[0 for x in range(w)] for y in range(h)]
+    key = Board(iniStatus)
 
 def redraw(surface):
     surface.fill((0, 0, 0))
