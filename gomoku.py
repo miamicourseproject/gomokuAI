@@ -86,8 +86,8 @@ def main():
     start_game()
     # main loop
     flag = True
+    start_game()
     while flag:
-        start_game()
         inp = key.listen()
         redraw(frame)
 
