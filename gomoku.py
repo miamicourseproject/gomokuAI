@@ -6,34 +6,32 @@ from tkinter import messagebox
 
 
 class Board(object):
-    def __init__(self, status, ROW, COL):
+    def __init__(self, status, ROW, COL, aiplayer):
         self.turnA = True
-        self.turnB = False
         self.status = status
         self.ROW = ROW
         self.COL = COL
+        self.aiplayer = aiplayer
 
     def listen(self):  # listen to the user
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if pygame.mouse.get_pressed()[0]:
-                col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
-                row1 = (pygame.mouse.get_pos()[1] - y_margin) // size
-                # check and update the status
-                if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
-                    # notice that this character is chosen
-                    print("dont choose again!")
-                    break
-                else:
-                    if self.turnA:
-                        self.status[col1][row1] = 1
-                        self.turnA = False
-                        self.turnB = True
+            if self.turnA:
+                self.status = self.aiplayer.miniMax(self.status)
+                self.turnA = not self.turnA
+            else:
+                if pygame.mouse.get_pressed()[0]:
+                    col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
+                    row1 = (pygame.mouse.get_pos()[1] - y_margin) // size
+                    # check and update the status
+                    if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
+                        # notice that this character is chosen
+                        print("dont choose again!")
+                        break
                     else:
                         self.status[col1][row1] = -1
-                        self.turnA = True
-                        self.turnB = False
+                        self.turnA = not self.turnA
 
     def draw(self, surface):
         global size, x_margin, y_margin
@@ -95,10 +93,23 @@ class Board(object):
         return False
 
 
+class AIPlayer(object):
+    def __init__(self, depth):
+        self.depth = depth
+    def miniMax(self, status, alpha, beta, maximizingPlayer):
+        if self.depth == 0 or
+
+        return status
+
+    def evaluation(self):
+        pass
+
+
 def startBoard():
+    ai = AIPlayer(2)
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, ROW, COL)
+    key = Board(iniStatus, ROW, COL, ai)
 
 
 def redraw(surface):
