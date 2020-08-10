@@ -90,7 +90,6 @@ class Board(object):
                                 print("A wins")
                             else:
                                 print("B wins")
-
                             return True
         return False
 
