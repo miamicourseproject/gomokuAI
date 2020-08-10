@@ -59,17 +59,25 @@ class Board(object):
                     text = font.render('o', True, (0, 0, 0))
                 surface.blit(text, (k * 40 + 20, l * 40))
 
-    def check_in_bound(self, x, y):
-        return 0 <= x < self.COL and 0 <= y < self.ROW
 
-    def check_win(self):
+class moving:
+
+    def check_in_bound(col1, row1, COL, ROW):
+        return 0 <= col1 < COL and 0 <= row1 < ROW
+
+    @staticmethod
+    def check_win(self, status):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
 
-        for row in range(self.ROW):
-            for col in range(self.COL):
-                if self.status[col][row] != 0:
+        # prepare column and row
+        COL = len(status)
+        ROW = len(status[0])
+
+        for row in range(ROW):
+            for col in range(COL):
+                if status[col][row] != 0:
                     # all direction
                     for direction in range(4):
                         # begin
@@ -78,14 +86,14 @@ class Board(object):
                         times = 1
 
                         # count number of consecutive x/o
-                        while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
+                        while self.check_in_bound(col1, row1, COL, ROW) and status[col1][row1] == status[col][row]:
                             times += 1
                             row1 = row1 + dir[direction][1]
                             col1 = col1 + dir[direction][0]
 
                         # check win
                         if times == 5:
-                            if self.status[col][row] == 1:
+                            if status[col][row] == 1:
                                 print("A wins")
                             else:
                                 print("B wins")
@@ -96,8 +104,10 @@ class Board(object):
 class AIPlayer(object):
     def __init__(self, depth):
         self.depth = depth
+
     def miniMax(self, status, alpha, beta, maximizingPlayer):
-        if self.depth == 0 or
+        if self.depth == 0:
+            pass
 
         return status
 
@@ -141,7 +151,7 @@ def main():
     while flag:
         key.listen()
         redraw(frame)
-        if key.check_win():
+        if moving.check_win(key.status):
             pygame.time.delay(500)
             start_game()
 
