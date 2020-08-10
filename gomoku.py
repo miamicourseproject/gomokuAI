@@ -1,4 +1,5 @@
 from math import pi
+import math
 import random
 import pygame
 import tkinter as tk
@@ -98,12 +99,51 @@ class AIPlayer(object):
     def __init__(self, depth):
         self.depth = depth
     def miniMax(self, status, alpha, beta, maximizingPlayer):
-        if self.depth == 0 or
+        if self.depth == 0:
+            return self.evaluation()
+        if maximizingPlayer:
+            maxEval = -math.inf
+            childMax = None
+            #save child in a instance variable or..
+            for child in self.childSet(self.status, True):
+                eval = self.miniMax(child, self.depth-1, alpha, beta, False)
+                if eval > maxEval:
+                    maxEval = eval
+                    childMax = child
+                alpha = max(alpha,eval)
+                if beta <= alpha:
+                    break
+            return childMax
+        else:
+            minEval = math.inf
+            for child in self.childSet(self.status, False):
+                eval = self.miniMax(child, self.depth-1, alpha, beta, True)
+                minEval = min(minEval,eval)
+                beta = min(beta,eval)
+                if beta <= alpha:
+                    break
+            return minEval
 
         return status
 
     def evaluation(self):
         pass
+
+    def childSet(self, status, turn):
+        listChild = []
+        for k in range(15):
+            for l in range (15):
+                if status[k][l] != 0:
+                    break
+                else:
+                    if turn:
+                        status[k][l] = -1
+                    else:
+                        status[k][l] = 1
+                    listChild.append(status)
+                status[k][l] = 0
+
+        return listChild
 
 
 def startBoard():
