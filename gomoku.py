@@ -1,4 +1,5 @@
 from math import pi
+import math
 import random
 import pygame
 import tkinter as tk
@@ -18,7 +19,8 @@ class Board(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
             if self.turnA:
-                self.status = self.aiplayer.miniMax(self.status)
+                self.aiplayer.miniMax(self.status, -math.inf, math.inf, True)
+                self.status = self.aiplayer.next_move
                 self.turnA = not self.turnA
             else:
                 if pygame.mouse.get_pressed()[0]:
@@ -59,17 +61,25 @@ class Board(object):
                     text = font.render('o', True, (0, 0, 0))
                 surface.blit(text, (k * 40 + 20, l * 40))
 
-    def check_in_bound(self, x, y):
-        return 0 <= x < self.COL and 0 <= y < self.ROW
 
-    def check_win(self):
+class moving:
+
+    def check_in_bound(col1, row1, COL, ROW):
+        return 0 <= col1 < COL and 0 <= row1 < ROW
+
+    @staticmethod
+    def check_win(self, status):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
 
-        for row in range(self.ROW):
-            for col in range(self.COL):
-                if self.status[col][row] != 0:
+        # prepare column and row
+        COL = len(status)
+        ROW = len(status[0])
+
+        for row in range(ROW):
+            for col in range(COL):
+                if status[col][row] != 0:
                     # all direction
                     for direction in range(4):
                         # begin
@@ -78,14 +88,14 @@ class Board(object):
                         times = 1
 
                         # count number of consecutive x/o
-                        while self.check_in_bound(col1, row1) and self.status[col1][row1] == self.status[col][row]:
+                        while self.check_in_bound(col1, row1, COL, ROW) and status[col1][row1] == status[col][row]:
                             times += 1
                             row1 = row1 + dir[direction][1]
                             col1 = col1 + dir[direction][0]
 
                         # check win
                         if times == 5:
-                            if self.status[col][row] == 1:
+                            if status[col][row] == 1:
                                 print("A wins")
                             else:
                                 print("B wins")
@@ -96,13 +106,57 @@ class Board(object):
 class AIPlayer(object):
     def __init__(self, depth):
         self.depth = depth
-    def miniMax(self, status, alpha, beta, maximizingPlayer):
-        if self.depth == 0 or
+        self.next_move = None
 
-        return status
+    def miniMax(self, status, alpha, beta, maximizingPlayer):
+        if self.depth == 0 or moving.check_win(status):
+            return self.evaluation()
+        if maximizingPlayer:
+            maxEval = -math.inf
+            childMax = None
+            # save child in a instance variable or..
+            for child in self.childSet(self.status, True):
+                eval = self.miniMax(child, self.depth - 1, alpha, beta, False)
+                if eval > maxEval:
+                    maxEval = eval
+                    childMax = child
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            self.next_move = childMax
+            return childMax
+        else:
+            minEval = math.inf
+            childMin = None
+            for child in self.childSet(self.status, False):
+                eval = self.miniMax(child, self.depth - 1, alpha, beta, True)
+                if eval < minEval:
+                    minEval = eval
+                    childMin = child
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+            self.next_move = childMin
+            return minEval
 
     def evaluation(self):
         pass
+
+    def childSet(self, status, turn):
+        listChild = []
+        for k in range(15):
+            for l in range(15):
+                if status[k][l] != 0:
+                    break
+                else:
+                    if turn:
+                        status[k][l] = -1
+                    else:
+                        status[k][l] = 1
+                    listChild.append(status)
+                status[k][l] = 0
+
+        return listChild
 
 
 def startBoard():
