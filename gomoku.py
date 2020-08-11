@@ -62,41 +62,40 @@ class Board(object):
                 surface.blit(text, (k * 40 + 20, l * 40))
 
 
-class moving:
-
-    def check_in_bound(self, col1, row1, COL, ROW):
+class ultility:
+    @staticmethod
+    def check_in_bound(col1, row1, COL, ROW):
         return 0 <= col1 < COL and 0 <= row1 < ROW
 
     @staticmethod
-    def counting(self, status, pattern):
+    def counting(status, pattern):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
 
         # prepare column, row, length, count
-        COL = len(status)
-        ROW = len(status[0])
+        COL = 15
+        ROW = 15
         length = len(pattern)
         count = 0
 
         for row in range(ROW):
             for col in range(COL):
-                if status[col][row] != 0:
-                    # all 4 direction
-                    for direction in range(4):
-                        # begin
-                        row1 = row
-                        col1 = col
-                        # check if fit the pattern
-                        index = 0
-                        while self.check_in_bound(col1, row1, COL, ROW) \
-                                and status[col1][row1] == pattern[index]\
-                                    and index < length:
-                            row1 = row + dir[direction][1]
-                            col1 = col + dir[direction][0]
-                            index += 1
-                        if index == length:
-                            count += 1
+                # all 4 direction
+                for direction in range(4):
+                    # begin
+                    row1 = row
+                    col1 = col
+                    # check if fit the pattern
+                    index = 0
+                    while index < length and ultility.check_in_bound(col1, row1, COL, ROW) \
+                            and status[col1][row1] == pattern[index]:
+                        row1 = row1 + dir[direction][1]
+                        col1 = col1 + dir[direction][0]
+                        index += 1
+                    if index == length:
+                        count += 1
+
         return count
 
     def check_win(self, status):
