@@ -64,43 +64,45 @@ class Board(object):
 
 class moving:
 
-    def check_in_bound(col1, row1, COL, ROW):
+    def check_in_bound(self, col1, row1, COL, ROW):
         return 0 <= col1 < COL and 0 <= row1 < ROW
 
     @staticmethod
-    def check_win(self, status):
+    def counting(self, status, pattern):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
 
-        # prepare column and row
+        # prepare column, row, length, count
         COL = len(status)
         ROW = len(status[0])
+        length = len(pattern)
+        count = 0
 
         for row in range(ROW):
             for col in range(COL):
                 if status[col][row] != 0:
-                    # all direction
+                    # all 4 direction
                     for direction in range(4):
                         # begin
-                        row1 = row + dir[direction][1]
-                        col1 = col + dir[direction][0]
-                        times = 1
+                        row1 = row
+                        col1 = col
+                        # check if fit the pattern
+                        index = 0
+                        while self.check_in_bound(col1, row1, COL, ROW) \
+                                and status[col1][row1] == pattern[index]\
+                                    and index < length:
+                            row1 = row + dir[direction][1]
+                            col1 = col + dir[direction][0]
+                            index += 1
+                        if index == length:
+                            count += 1
+        return count
 
-                        # count number of consecutive x/o
-                        while self.check_in_bound(col1, row1, COL, ROW) and status[col1][row1] == status[col][row]:
-                            times += 1
-                            row1 = row1 + dir[direction][1]
-                            col1 = col1 + dir[direction][0]
-
-                        # check win
-                        if times == 5:
-                            if status[col][row] == 1:
-                                print("A wins")
-                            else:
-                                print("B wins")
-                            return True
-        return False
+    def check_win(self, status):
+        pattern1 = [1, 1, 1, 1, 1]
+        pattern2 = [0, 0, 0, 0, 0]
+        return self.counting(status, pattern1) > 0 or self.counting(status, pattern2) > 0
 
 
 class AIPlayer(object):
