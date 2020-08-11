@@ -114,49 +114,45 @@ class AIPlayer(object):
         if maximizingPlayer:
             maxEval = -math.inf
             childMax = None
-            # save child in a instance variable or..
-            for child in self.childSet(self.status, True):
-                eval = self.miniMax(child, self.depth - 1, alpha, beta, False)
-                if eval > maxEval:
-                    maxEval = eval
-                    childMax = child
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break
+            for k in range (15):
+                for l in range(15):
+                    if self.validMove(status, k, l):
+                        status[k][l] = 1
+                        child = status
+                        eval = self.miniMax(child, self.depth - 1, alpha, beta, False)
+                        if eval > maxEval:
+                            maxEval = eval
+                            childMax = child
+                        alpha = max(alpha, eval)
+                        status[k][l] = 0
+                        if beta <= alpha:
+                            break
             self.next_move = childMax
             return childMax
         else:
             minEval = math.inf
             childMin = None
-            for child in self.childSet(self.status, False):
-                eval = self.miniMax(child, self.depth - 1, alpha, beta, True)
-                if eval < minEval:
-                    minEval = eval
-                    childMin = child
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break
+            for k in range (15):
+                for l in range(15):
+                    if self.validMove(status, k, l):
+                        status[k][l] = -1
+                        child = status
+                        eval = self.miniMax(child, self.depth - 1, alpha, beta, True)
+                        if eval < minEval:
+                            minEval = eval
+                            childMin = child
+                        beta = min(alpha, eval)
+                        status[k][l] = 0
+                        if beta <= alpha:
+                            break
             self.next_move = childMin
-            return minEval
+            return childMin
 
     def evaluation(self):
         pass
 
-    def childSet(self, status, turn):
-        listChild = []
-        for k in range(15):
-            for l in range(15):
-                if status[k][l] != 0:
-                    break
-                else:
-                    if turn:
-                        status[k][l] = -1
-                    else:
-                        status[k][l] = 1
-                    listChild.append(status)
-                status[k][l] = 0
-
-        return listChild
+    def validMove(self, status, k, l):
+        return status[k][l] == 0
 
 
 def startBoard():
