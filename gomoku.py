@@ -134,7 +134,7 @@ class AIPlayer(object):
         else:
             minEval = math.inf
             childMin = None
-            for k in range (15):
+            for k in range(15):
                 for l in range(15):
                     if self.validMove(status, k, l):
                         status[k][l] = -1
