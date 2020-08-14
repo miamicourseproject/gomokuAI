@@ -62,13 +62,14 @@ class Board(object):
                 surface.blit(text, (k * 40 + 20, l * 40))
 
 
-class moving:
+class Utility:
 
+    @staticmethod
     def check_in_bound(self, col1, row1, COL, ROW):
         return 0 <= col1 < COL and 0 <= row1 < ROW
 
     @staticmethod
-    def counting(self, status, pattern):
+    def counting(status, pattern):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
@@ -89,20 +90,21 @@ class moving:
                         col1 = col
                         # check if fit the pattern
                         index = 0
-                        while self.check_in_bound(col1, row1, COL, ROW) \
+                        while Utility.check_in_bound(col1, row1, COL, ROW) \
                                 and status[col1][row1] == pattern[index]\
                                     and index < length:
-                            row1 = row + dir[direction][1]
-                            col1 = col + dir[direction][0]
+                            row1 = row1 + dir[direction][1]
+                            col1 = col1 + dir[direction][0]
                             index += 1
                         if index == length:
                             count += 1
         return count
 
-    def check_win(self, status):
+    @staticmethod
+    def check_win(status):
         pattern1 = [1, 1, 1, 1, 1]
-        pattern2 = [0, 0, 0, 0, 0]
-        return self.counting(status, pattern1) > 0 or self.counting(status, pattern2) > 0
+        pattern2 = [-1, -1, -1, -1, -1]
+        return Utility.counting(status, pattern1) > 0 or Utility.counting(status, pattern2) > 0
 
 
 class AIPlayer(object):
@@ -111,7 +113,7 @@ class AIPlayer(object):
         self.next_move = None
 
     def miniMax(self, status, alpha, beta, maximizingPlayer):
-        if self.depth == 0 or moving.check_win(status):
+        if self.depth == 0 or Utility.check_win(status):
             return self.evaluation()
         if maximizingPlayer:
             maxEval = -math.inf
@@ -193,7 +195,7 @@ def main():
     while flag:
         key.listen()
         redraw(frame)
-        if key.check_win():
+        if Utility.check_win():
             pygame.time.delay(500)
             start_game()
 
