@@ -99,8 +99,8 @@ class ultility:
         return count
     @staticmethod
     def check_win(status):
-        pattern1 = [1, 1, 1, 1, 1]
-        pattern2 = [0, 0, 0, 0, 0]
+        pattern1 = (1, 1, 1, 1, 1)
+        pattern2 = (0, 0, 0, 0, 0)
         return ultility.counting(status, pattern1) > 0 or ultility.counting(status, pattern2) > 0
 
 
@@ -155,21 +155,21 @@ class AIPlayer(object):
         pattern_dict = {}
         while (x < 2):
             #open3
-            pattern_dict[[0, x, x, x, 0]] = 100000*x
+            pattern_dict[(0, x, x, x, 0)] = 100000*x
             #capped3
-            pattern_dict[[y, x, x, x, y]] = 10000 * x
+            pattern_dict[(y, x, x, x, y)] = 10000 * x
             #consecutive5
-            pattern_dict[[x, x, x, x, x]] = 10000000 * x
+            pattern_dict[(x, x, x, x, x)] = 10000000 * x
             #gapped4_right
-            pattern_dict[[x, x, x, 0, x]] = 100050 * x
+            pattern_dict[(x, x, x, 0, x)] = 100050 * x
             # gapped4_left
-            pattern_dict[[x, 0, x, x, x]] = 100050 * x
+            pattern_dict[(x, 0, x, x, x)] = 100050 * x
             # gapped2_2
-            pattern_dict[[x, x, 0, x, x]] = 100050 * x
+            pattern_dict[(x, x, 0, x, x)] = 100050 * x
             # open4
-            pattern_dict[[0, x, x, x, x, 0]] = 1000000 * x
+            pattern_dict[(0, x, x, x, x, 0)] = 1000000 * x
             # capped4
-            pattern_dict[[y, x, x, x, x, y]] = 100050 * x
+            pattern_dict[(y, x, x, x, x, y)] = 100050 * x
 
             x += 2
         value = 0
