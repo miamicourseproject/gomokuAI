@@ -19,8 +19,8 @@ class Board(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
             if self.turnA:
-                self.aiplayer.miniMax(self.status, -math.inf, math.inf, True)
-                self.status = self.aiplayer.next_move
+                self.aiplayer.miniMax(self.status, self.aiplayer.depth, -math.inf, math.inf, True)
+                self.status[self.aiplayer.next_move[0]][self.aiplayer.next_move[1]] = 1
                 self.turnA = not self.turnA
             else:
                 if pygame.mouse.get_pressed()[0]:
@@ -98,58 +98,57 @@ class ultility:
 
         return count
 
-    def check_win(self, status):
+    @staticmethod
+    def check_win(status):
         pattern1 = [1, 1, 1, 1, 1]
-        pattern2 = [0, 0, 0, 0, 0]
-        return self.counting(status, pattern1) > 0 or self.counting(status, pattern2) > 0
+        pattern2 = [-1, -1, -1, -1, -1]
+        return ultility.counting(status, pattern1) > 0 or ultility.counting(status, pattern2) > 0
 
 
 class AIPlayer(object):
     def __init__(self, depth):
         self.depth = depth
-        self.next_move = None
+        self.next_move = [-1, -1]
 
-    def miniMax(self, status, alpha, beta, maximizingPlayer):
-        if self.depth == 0 or moving.check_win(status):
-            return self.evaluation()
+    def miniMax(self, status, depth, alpha, beta, maximizingPlayer):
+        if depth == 0 or ultility.check_win(status):
+            return self.evaluation(status)
         if maximizingPlayer:
             maxEval = -math.inf
-            childMax = None
-            for k in range (15):
+            childMax = [-1, -1]
+            for k in range(15):
                 for l in range(15):
                     if self.validMove(status, k, l):
                         status[k][l] = 1
-                        child = status
-                        eval = self.miniMax(child, self.depth - 1, alpha, beta, False)
+                        eval = self.miniMax(status, depth - 1, alpha, beta, False)
                         if eval > maxEval:
                             maxEval = eval
-                            childMax = child
+                            childMax = [k, l]
                         alpha = max(alpha, eval)
                         status[k][l] = 0
                         if beta <= alpha:
                             break
             self.next_move = childMax
-            return childMax
+            return maxEval
         else:
             minEval = math.inf
-            childMin = None
+            childMin = [-1, -1]
             for k in range(15):
                 for l in range(15):
                     if self.validMove(status, k, l):
                         status[k][l] = -1
-                        child = status
-                        eval = self.miniMax(child, self.depth - 1, alpha, beta, True)
+                        eval = self.miniMax(status, depth - 1, alpha, beta, True)
                         if eval < minEval:
                             minEval = eval
-                            childMin = child
+                            childMin = [k, l]
                         beta = min(alpha, eval)
                         status[k][l] = 0
                         if beta <= alpha:
                             break
             self.next_move = childMin
-            return childMin
+            return minEval
 
-    def evaluation(self):
+    def evaluation(self, status):
         pass
 
     def validMove(self, status, k, l):
@@ -192,7 +191,7 @@ def main():
     while flag:
         key.listen()
         redraw(frame)
-        if key.check_win():
+        if ultility.check_win(key.status):
             pygame.time.delay(500)
             start_game()
 
