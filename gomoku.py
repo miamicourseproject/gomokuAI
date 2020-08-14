@@ -206,7 +206,7 @@ def start_game():
 def main():
     # prepare
     global width, height, score, ROW, COL
-    ROW = 15
+    ROW = 14
     COL = 15
     score = 0
     pygame.init()
