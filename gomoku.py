@@ -19,7 +19,7 @@ class Board(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
             if self.turnA:
-                self.aiplayer.miniMax(self.status, -math.inf, math.inf, True)
+                self.aiplayer.miniMax(self.status, self.aiplayer.depth, -math.inf, math.inf, True)
                 self.status = self.aiplayer.next_move
                 self.turnA = not self.turnA
             else:
@@ -97,11 +97,11 @@ class ultility:
                         count += 1
 
         return count
-
-    def check_win(self, status):
+    @staticmethod
+    def check_win(status):
         pattern1 = [1, 1, 1, 1, 1]
         pattern2 = [0, 0, 0, 0, 0]
-        return self.counting(status, pattern1) > 0 or self.counting(status, pattern2) > 0
+        return ultility.counting(status, pattern1) > 0 or ultility.counting(status, pattern2) > 0
 
 
 class AIPlayer(object):
@@ -109,9 +109,9 @@ class AIPlayer(object):
         self.depth = depth
         self.next_move = None
 
-    def miniMax(self, status, alpha, beta, maximizingPlayer):
-        if self.depth == 0 or moving.check_win(status):
-            return self.evaluation()
+    def miniMax(self, status, depth, alpha, beta, maximizingPlayer):
+        if depth == 0 or ultility.check_win(status):
+            return self.evaluation(status)
         if maximizingPlayer:
             maxEval = -math.inf
             childMax = None
@@ -120,7 +120,7 @@ class AIPlayer(object):
                     if self.validMove(status, k, l):
                         status[k][l] = 1
                         child = status
-                        eval = self.miniMax(child, self.depth - 1, alpha, beta, False)
+                        eval = self.miniMax(child, depth - 1, alpha, beta, False)
                         if eval > maxEval:
                             maxEval = eval
                             childMax = child
@@ -129,7 +129,7 @@ class AIPlayer(object):
                         if beta <= alpha:
                             break
             self.next_move = childMax
-            return childMax
+            return maxEval
         else:
             minEval = math.inf
             childMin = None
@@ -138,7 +138,7 @@ class AIPlayer(object):
                     if self.validMove(status, k, l):
                         status[k][l] = -1
                         child = status
-                        eval = self.miniMax(child, self.depth - 1, alpha, beta, True)
+                        eval = self.miniMax(child, depth - 1, alpha, beta, True)
                         if eval < minEval:
                             minEval = eval
                             childMin = child
@@ -147,10 +147,36 @@ class AIPlayer(object):
                         if beta <= alpha:
                             break
             self.next_move = childMin
-            return childMin
+            return minEval
 
-    def evaluation(self):
-        pass
+    def evaluation(self, status):
+        x = -1
+        y = -x
+        pattern_dict = {}
+        while (x < 2):
+            #open3
+            pattern_dict[[0, x, x, x, 0]] = 100000*x
+            #capped3
+            pattern_dict[[y, x, x, x, y]] = 10000 * x
+            #consecutive5
+            pattern_dict[[x, x, x, x, x]] = 10000000 * x
+            #gapped4_right
+            pattern_dict[[x, x, x, 0, x]] = 100050 * x
+            # gapped4_left
+            pattern_dict[[x, 0, x, x, x]] = 100050 * x
+            # gapped2_2
+            pattern_dict[[x, x, 0, x, x]] = 100050 * x
+            # open4
+            pattern_dict[[0, x, x, x, x, 0]] = 1000000 * x
+            # capped4
+            pattern_dict[[y, x, x, x, x, y]] = 100050 * x
+
+            x += 2
+        value = 0
+        for pattern in pattern_dict:
+            value += ultility.counting(status,pattern) * pattern_dict[pattern]
+        return value
+
 
     def validMove(self, status, k, l):
         return status[k][l] == 0
@@ -159,7 +185,11 @@ class AIPlayer(object):
 def startBoard():
     ai = AIPlayer(2)
     global iniStatus, key
-    iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
+    iniStatus = [[]]
+    for k in range(15):
+        iniStatus.append([])
+        for l in range(15):
+            iniStatus[k].append(0)
     key = Board(iniStatus, ROW, COL, ai)
 
 
@@ -192,7 +222,7 @@ def main():
     while flag:
         key.listen()
         redraw(frame)
-        if key.check_win():
+        if ultility.check_win(key.status):
             pygame.time.delay(500)
             start_game()
 
