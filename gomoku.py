@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 #hello world
+#namhoanghieuphan
 class Board(object):
     def __init__(self, status, ROW, COL, aiplayer):
         self.turnA = True
