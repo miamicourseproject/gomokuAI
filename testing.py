@@ -5,6 +5,8 @@ import pygame
 import tkinter as tk
 from tkinter import messagebox
 
+#hello world
+#namhoanghieuphan
 class Board(object):
     def __init__(self, status, ROW, COL, aiplayer):
         self.turnA = True
@@ -67,61 +69,56 @@ class ultility:
         return 0 <= col1 < COL and 0 <= row1 < ROW
 
     @staticmethod
-    def counting(x_position, y_position, pattern, COL, ROW, status):
+    def counting(status, pattern):
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
 
         # prepare column, row, length, count
+        COL = 3
+        ROW = 3
         length = len(pattern)
         count = 0
 
-        # all 4 direction
-        for direction in range(4):
-            # find starting point
-            if dir[direction][0]*dir[direction][1] == 0:
-                numberOfGoBack = dir[direction][0] * min(5, x_position) + dir[direction][1] * min(5, y_position)
-            else:
-                numberOfGoBack = min(5, (x_position * dir[direction][0]) % COL, y_position)
-            # very first starting point
-            x_starting = x_position - numberOfGoBack * dir[direction][0]
-            y_starting = y_position - numberOfGoBack * dir[direction][1]
-            # loop through different possible patterns in a row/col/diag
-            for i in range(numberOfGoBack):
-                # get a new starting point
-                row1 = y_starting + i*dir[direction][1]
-                col1 = x_starting + i*dir[direction][0]
-                index = 0
-                while index < length and ultility.check_in_bound(col1, row1, COL, ROW) \
-                        and status[col1][row1] == pattern[index]:
-                    row1 = row1 + dir[direction][1]
-                    col1 = col1 + dir[direction][0]
-                    index += 1
-                if index == length:
-                    count += 1
+        for row in range(ROW):
+            for col in range(COL):
+                # all 4 direction
+                for direction in range(4):
+                    # begin
+                    row1 = row
+                    col1 = col
+                    # check if fit the pattern
+                    index = 0
+                    while index < length and ultility.check_in_bound(col1, row1, COL, ROW) \
+                            and status[col1][row1] == pattern[index]:
+                        row1 = row1 + dir[direction][1]
+                        col1 = col1 + dir[direction][0]
+                        index += 1
+                    if index == length:
+                        count += 1
+
         return count
 
-@staticmethod
-def check_win(status, COL, ROW):
-    pattern1 = (1, 1, 1, 1, 1)
-    pattern2 = (-1, -1, -1, -1, -1)
-    return ultility.counting(status, pattern1, COL, ROW) > 0 or ultility.counting(status, pattern2, COL, ROW) > 0
+    @staticmethod
+    def check_win(status):
+        pattern1 = (1, 1, 1, 1, 1)
+        pattern2 = (-1, -1, -1, -1, -1)
+        return ultility.counting(status, pattern1) > 0 or ultility.counting(status, pattern2) > 0
 
 
 class AIPlayer(object):
-    def __init__(self, depth, COL, ROW):
+    def __init__(self, depth):
         self.depth = depth
         self.next_move = [-1, -1]
-        self.ROW = ROW
-        self.COL = COL
+
     def miniMax(self, status, depth, alpha, beta, maximizingPlayer):
         if depth == 0 or ultility.check_win(status):
             return self.evaluation(status)
         if maximizingPlayer:
             maxEval = -math.inf
             childMax = [-1, -1]
-            for k in range(self.COL):
-                for l in range(self.ROW):
+            for k in range(3):
+                for l in range(3):
                     if self.validMove(status, k, l):
                         status[k][l] = 1
                         eval = self.miniMax(status, depth - 1, alpha, beta, False)
@@ -137,8 +134,8 @@ class AIPlayer(object):
         else:
             minEval = math.inf
             childMin = [-1, -1]
-            for k in range(self.COL):
-                for l in range(self.ROW):
+            for k in range(3):
+                for l in range(3):
                     if self.validMove(status, k, l):
                         status[k][l] = -1
                         eval = self.miniMax(status, depth - 1, alpha, beta, True)
@@ -152,13 +149,11 @@ class AIPlayer(object):
             self.next_move = childMin
             return minEval
 
-    def evaluation(self, new_x, new_y, currentBoardEval):
-
-        return 0
+    def evaluation(self, status):
         x = -1
+        y = -x
         pattern_dict = {}
         while (x < 2):
-            y = -x
             #open3
             pattern_dict[(0, x, x, x, 0)] = 100000*x
             #capped3
@@ -179,7 +174,7 @@ class AIPlayer(object):
             x += 2
         value = 0
         for pattern in pattern_dict:
-            value += ultility.counting(status, pattern, self.COL, self.ROW) * pattern_dict[pattern]
+            value += ultility.counting(status, pattern) * pattern_dict[pattern]
         return value
 
 
@@ -188,10 +183,10 @@ class AIPlayer(object):
 
 
 def startBoard():
-    ai = AIPlayer(2, COL, ROW)
+    ai = AIPlayer(2)
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, COL, ROW, ai)
+    key = Board(iniStatus, ROW, COL, ai)
 
 
 def redraw(surface):
@@ -203,35 +198,12 @@ def redraw(surface):
 def start_game():
     startBoard()
 
-def create_pattern_dict():
-    x = -1
-    pattern_dict = {}
-    while (x < 2):
-        y = -x
-        #open3
-        pattern_dict[(0, x, x, x, 0)] = 100000*x
-        #capped3
-        pattern_dict[(y, x, x, x, y)] = 10000 * x
-        #consecutive5
-        pattern_dict[(x, x, x, x, x)] = 10000000 * x
-        #gapped4_right
-        pattern_dict[(x, x, x, 0, x)] = 100050 * x
-        # gapped4_left
-        pattern_dict[(x, 0, x, x, x)] = 100050 * x
-        # gapped2_2
-        pattern_dict[(x, x, 0, x, x)] = 100050 * x
-        # open4
-        pattern_dict[(0, x, x, x, x, 0)] = 1000000 * x
-        # capped4
-        pattern_dict[(y, x, x, x, x, y)] = 100050 * x
-
-        x += 2
 
 def main():
     # prepare
     global width, height, score, ROW, COL
-    ROW = 15
-    COL = 15
+    ROW = 3
+    COL = 3
     score = 0
     pygame.init()
     width = 650
@@ -246,8 +218,8 @@ def main():
     while flag:
         key.listen()
         redraw(frame)
-        if ultility.check_win(key.status, COL, ROW):
-            pygame.time.delay(50)
+        if ultility.check_win(key.status):
+            pygame.time.delay(500)
             start_game()
 
 
