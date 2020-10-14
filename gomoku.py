@@ -101,11 +101,11 @@ class ultility:
                     count += 1
         return count
 
-@staticmethod
-def check_win(status, COL, ROW):
-    pattern1 = (1, 1, 1, 1, 1)
-    pattern2 = (-1, -1, -1, -1, -1)
-    return ultility.counting(status, pattern1, COL, ROW) > 0 or ultility.counting(status, pattern2, COL, ROW) > 0
+    @staticmethod
+    def check_win(status, COL, ROW):
+        pattern1 = (1, 1, 1, 1, 1)
+        pattern2 = (-1, -1, -1, -1, -1)
+        return ultility.counting(status, pattern1, COL, ROW) > 0 or ultility.counting(status, pattern2, COL, ROW) > 0
 
 
 class AIPlayer(object):
