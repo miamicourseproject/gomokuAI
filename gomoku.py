@@ -179,7 +179,7 @@ class AIPlayer(object):
             x += 2
         value = 0
         for pattern in pattern_dict:
-            value += ultility.counting(status, pattern, self.COL, self.ROW) * pattern_dict[pattern]
+            value += ultility.counting(self.status, pattern, self.COL, self.ROW) * pattern_dict[pattern]
         return value
 
 
