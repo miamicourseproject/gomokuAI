@@ -239,7 +239,4 @@ def main():
         if ultility.check_win(key.value):
             pygame.time.delay(50)
             start_game()
-
-
-
 main()
