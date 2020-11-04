@@ -6,9 +6,10 @@ import tkinter as tk
 from tkinter import messagebox
 
 class Board(object):
-    def __init__(self, status, ROW, COL, aiplayer):
+    def __init__(self, status, value, ROW, COL, aiplayer):
         self.turnA = True
         self.status = status
+        self.value = value
         self.ROW = ROW
         self.COL = COL
         self.aiplayer = aiplayer
@@ -18,7 +19,8 @@ class Board(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
             if self.turnA:
-                self.aiplayer.miniMax(self.status, self.aiplayer.depth, -math.inf, math.inf, True)
+                self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, True)
+                self.value = self.aiplayer.next_value
                 self.status[self.aiplayer.next_move[0]][self.aiplayer.next_move[1]] = 1
                 self.turnA = not self.turnA
             else:
@@ -102,32 +104,34 @@ class ultility:
         return count
 
     @staticmethod
-    def check_win(status, COL, ROW):
-        pattern1 = (1, 1, 1, 1, 1)
-        pattern2 = (-1, -1, -1, -1, -1)
-        return ultility.counting(status, pattern1, COL, ROW) > 0 or ultility.counting(status, pattern2, COL, ROW) > 0
-
+    def check_win(value):
+        return value % 10 == 1
 
 class AIPlayer(object):
-    def __init__(self, depth, COL, ROW):
+    def __init__(self, depth, COL, ROW, pattern_dict):
         self.depth = depth
-        self.next_move = [-1, -1]
         self.ROW = ROW
         self.COL = COL
-    def miniMax(self, status, depth, alpha, beta, maximizingPlayer):
-        if depth == 0 or ultility.check_win(status):
-            return self.evaluation(status)
+        self.pattern_dict = pattern_dict
+        # self declared
+        self.next_move = [-1, -1]
+        self.next_value = 0
+    def miniMax(self, status, value, depth, alpha, beta, maximizingPlayer):
+        if depth == 0 or ultility.check_win(value):
+            return value
         if maximizingPlayer:
             maxEval = -math.inf
             childMax = [-1, -1]
             for k in range(self.COL):
                 for l in range(self.ROW):
                     if self.validMove(status, k, l):
+                        new_val = self.evaluation(k, l, value, status, 1)
                         status[k][l] = 1
-                        eval = self.miniMax(status, depth - 1, alpha, beta, False)
+                        eval = self.miniMax(status, new_val, depth - 1, alpha, beta, False)
                         if eval > maxEval:
                             maxEval = eval
                             childMax = [k, l]
+                            self.next_value = new_val
                         alpha = max(alpha, eval)
                         status[k][l] = 0
                         if beta <= alpha:
@@ -140,11 +144,13 @@ class AIPlayer(object):
             for k in range(self.COL):
                 for l in range(self.ROW):
                     if self.validMove(status, k, l):
+                        new_val = self.evaluation(k, l, value, status, -1)
                         status[k][l] = -1
-                        eval = self.miniMax(status, depth - 1, alpha, beta, True)
+                        eval = self.miniMax(status, new_val, depth - 1, alpha, beta, True)
                         if eval < minEval:
                             minEval = eval
                             childMin = [k, l]
+                            self.next_value = new_val
                         beta = min(alpha, eval)
                         status[k][l] = 0
                         if beta <= alpha:
@@ -186,12 +192,11 @@ class AIPlayer(object):
     def validMove(self, status, k, l):
         return status[k][l] == 0
 
-
 def startBoard():
-    ai = AIPlayer(2, COL, ROW)
+    ai = AIPlayer(2, COL, ROW, create_pattern_dict())
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, COL, ROW, ai)
+    key = Board(iniStatus, 0, COL, ROW, ai)
 
 
 def redraw(surface):
@@ -208,24 +213,29 @@ def create_pattern_dict():
     pattern_dict = {}
     while (x < 2):
         y = -x
-        #open3
+        # open3
         pattern_dict[(0, x, x, x, 0)] = 100000*x
-        #capped3
-        pattern_dict[(y, x, x, x, y)] = 10000 * x
-        #consecutive5
-        pattern_dict[(x, x, x, x, x)] = 10000000 * x
-        #gapped4_right
+        # capped3_left
+        pattern_dict[(0, x, x, x, y)] = 10000 * x
+        # capped3_right
+        pattern_dict[(y, x, x, x, 0)] = 10000 * x
+        # consecutive5
+        pattern_dict[(x, x, x, x, x)] = 10000000 * x + 1
+        # gapped4_right
         pattern_dict[(x, x, x, 0, x)] = 100050 * x
         # gapped4_left
         pattern_dict[(x, 0, x, x, x)] = 100050 * x
-        # gapped2_2
+        # gapped4_mid
         pattern_dict[(x, x, 0, x, x)] = 100050 * x
         # open4
         pattern_dict[(0, x, x, x, x, 0)] = 1000000 * x
-        # capped4
-        pattern_dict[(y, x, x, x, x, y)] = 100050 * x
+        # capped4_left
+        pattern_dict[(0, x, x, x, x, y)] = 100050 * x
+        # capped4_right
+        pattern_dict[(y, x, x, x, x, 0)] = 100050 * x
 
         x += 2
+    return pattern_dict
 
 def main():
     # prepare
@@ -242,13 +252,13 @@ def main():
     start_game()
     # main loop
     flag = True
-
     while flag:
         key.listen()
         redraw(frame)
-        if ultility.check_win(key.status, COL, ROW):
+        if ultility.check_win(key.value):
             pygame.time.delay(50)
             start_game()
+
 
 
 main()
