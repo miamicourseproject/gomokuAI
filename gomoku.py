@@ -158,35 +158,16 @@ class AIPlayer(object):
             self.next_move = childMin
             return minEval
 
-    def evaluation(self, new_x, new_y, currentBoardEval):
-
-        return 0
-        x = -1
-        pattern_dict = {}
-        while (x < 2):
-            y = -x
-            #open3
-            pattern_dict[(0, x, x, x, 0)] = 100000*x
-            #capped3
-            pattern_dict[(y, x, x, x, y)] = 10000 * x
-            #consecutive5
-            pattern_dict[(x, x, x, x, x)] = 10000000 * x
-            #gapped4_right
-            pattern_dict[(x, x, x, 0, x)] = 100050 * x
-            # gapped4_left
-            pattern_dict[(x, 0, x, x, x)] = 100050 * x
-            # gapped2_2
-            pattern_dict[(x, x, 0, x, x)] = 100050 * x
-            # open4
-            pattern_dict[(0, x, x, x, x, 0)] = 1000000 * x
-            # capped4
-            pattern_dict[(y, x, x, x, x, y)] = 100050 * x
-
-            x += 2
-        value = 0
-        for pattern in pattern_dict:
-            value += ultility.counting(self.status, pattern, self.COL, self.ROW) * pattern_dict[pattern]
-        return value
+    def evaluation(self, new_x, new_y, currentBoardEval, status, turn):
+        value_before = 0
+        value_after = 0
+        for pattern in self.pattern_dict:
+            value_before += ultility.counting(new_x, new_y, pattern, self.COL, self.ROW, status) * self.pattern_dict[pattern]
+            status[new_x][new_y] = turn
+            value_after += ultility.counting(new_x, new_y, pattern, self.COL, self.ROW, status) * self.pattern_dict[
+                pattern]
+            status[new_x][new_y] = 0
+        return currentBoardEval + value_after - value_before
 
 
     def validMove(self, status, k, l):
