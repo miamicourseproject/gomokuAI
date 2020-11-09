@@ -6,13 +6,14 @@ import tkinter as tk
 from tkinter import messagebox
 
 class Board(object):
-    def __init__(self, status, value, ROW, COL, aiplayer):
+    def __init__(self, status, value, ROW, COL, aiplayer, pattern_dict):
         self.turnA = True
         self.status = status
         self.value = value
         self.ROW = ROW
         self.COL = COL
         self.aiplayer = aiplayer
+        self.pattern_dict = pattern_dict
 
     def listen(self):  # listen to the user
         for event in pygame.event.get():
@@ -23,8 +24,11 @@ class Board(object):
                 ai_next_move_x = self.aiplayer.next_move[0]
                 ai_next_move_y = self.aiplayer.next_move[1]
                 self.value = self.aiplayer.evaluation(ai_next_move_x,ai_next_move_y,self.value,self.status,1)
-                # print(self.value)
+                print(self.value)
                 self.status[ai_next_move_x][ai_next_move_y] = 1
+                for pattern in self.pattern_dict:
+                    if ultility.counting(ai_next_move_x, ai_next_move_y, pattern, self.COL, self.ROW, self.status) > 0:
+                        print(pattern)
                 self.turnA = not self.turnA
             else:
                 if pygame.mouse.get_pressed()[0]:
@@ -37,8 +41,12 @@ class Board(object):
                         break
                     else:
                         self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,-1)
-                        # print(self.value)
+                        print(self.value)
                         self.status[col1][row1] = -1
+                        for pattern in self.pattern_dict:
+                            if ultility.counting(col1, row1, pattern, self.COL, self.ROW,
+                                                 self.status) > 0:
+                                print(pattern)
                         self.turnA = not self.turnA
 
     def draw(self, surface):
@@ -94,7 +102,7 @@ class ultility:
             x_starting = x_position - numberOfGoBack * dir[direction][0]
             y_starting = y_position - numberOfGoBack * dir[direction][1]
             # loop through different possible patterns in a row/col/diag
-            for i in range(numberOfGoBack):
+            for i in range(numberOfGoBack+1):
                 # get a new starting point
                 row1 = y_starting + i*dir[direction][1]
                 col1 = x_starting + i*dir[direction][0]
@@ -142,8 +150,6 @@ class AIPlayer(object):
                         if beta <= alpha:
                             break
             self.next_move = childMax
-            if (depth == 2) :
-                print(self.next_value)
             return maxEval
         else:
             minEval = math.inf
@@ -163,8 +169,6 @@ class AIPlayer(object):
                         if beta <= alpha:
                             break
             self.next_move = childMin
-            if (depth == 2):
-                print(self.next_value)
             return minEval
 
     def evaluation(self, new_x, new_y, currentBoardEval, status, turn):
@@ -186,7 +190,7 @@ def startBoard():
     ai = AIPlayer(2, COL, ROW, create_pattern_dict())
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, 0, COL, ROW, ai)
+    key = Board(iniStatus, 0, COL, ROW, ai, create_pattern_dict())
 
 
 def redraw(surface):
@@ -252,3 +256,19 @@ def main():
 
 
 main()
+# 0
+# 0
+# 0
+# 0
+# 0
+# -1010
+# (1, -1, -1, -1, 0)
+# 0
+# 0
+# 0
+# -1100
+# (0, -1, -1, -1, 0)
+# -1100
+# -10000090
+# (1, -1, -1, -1, -1, 0)
+# -90
