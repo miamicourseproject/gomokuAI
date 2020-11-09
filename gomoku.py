@@ -110,7 +110,7 @@ class ultility:
 
     @staticmethod
     def check_win(value):
-        return value % 10 == 1
+        return value % 10 != 0
 
 class AIPlayer(object):
     def __init__(self, depth, COL, ROW, pattern_dict):
@@ -204,25 +204,25 @@ def create_pattern_dict():
     while (x < 2):
         y = -x
         # open3
-        pattern_dict[(0, x, x, x, 0)] = 100000 * x
+        pattern_dict[(0, x, x, x, 0)] = 1100 * x
         # capped3_left
-        pattern_dict[(0, x, x, x, y)] = 10000 * x
+        pattern_dict[(0, x, x, x, y)] = 1010 * x
         # capped3_right
-        pattern_dict[(y, x, x, x, 0)] = 10000 * x
+        pattern_dict[(y, x, x, x, 0)] = 1010 * x
         # consecutive5
-        pattern_dict[(x, x, x, x, x)] = 10000000 * x + 1
+        pattern_dict[(x, x, x, x, x)] = 100000000000 * x + 1
         # gapped4_right
-        pattern_dict[(x, x, x, 0, x)] = 100050 * x
+        pattern_dict[(x, x, x, 0, x)] = 100000 * x
         # gapped4_left
-        pattern_dict[(x, 0, x, x, x)] = 100050 * x
+        pattern_dict[(x, 0, x, x, x)] = 100000 * x
         # gapped4_mid
-        pattern_dict[(x, x, 0, x, x)] = 100050 * x
+        pattern_dict[(x, x, 0, x, x)] = 1000000 * x
         # open4
-        pattern_dict[(0, x, x, x, x, 0)] = 1000000 * x
+        pattern_dict[(0, x, x, x, x, 0)] = 100000000 * x
         # capped4_left
-        pattern_dict[(0, x, x, x, x, y)] = 100050 * x
+        pattern_dict[(0, x, x, x, x, y)] = 10000000 * x
         # capped4_right
-        pattern_dict[(y, x, x, x, x, 0)] = 100050 * x
+        pattern_dict[(y, x, x, x, x, 0)] = 10000000 * x
 
         x += 2
     return pattern_dict
