@@ -23,7 +23,7 @@ class Board(object):
                 self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, True)
                 ai_next_move_x = self.aiplayer.next_move[0]
                 ai_next_move_y = self.aiplayer.next_move[1]
-                self.value = self.aiplayer.evaluation(ai_next_move_x,ai_next_move_y,self.value,self.status,1)
+                self.value = self.aiplayer.next_value
                 print(self.value)
                 self.status[ai_next_move_x][ai_next_move_y] = 1
                 for pattern in self.pattern_dict:
@@ -94,10 +94,12 @@ class ultility:
         # all 4 direction
         for direction in range(4):
             # find starting point
-            if dir[direction][0]*dir[direction][1] == 0:
+            if dir[direction][0] * dir[direction][1] == 0:
                 numberOfGoBack = dir[direction][0] * min(5, x_position) + dir[direction][1] * min(5, y_position)
+            elif dir[direction][0] == 1:
+                numberOfGoBack = min(5, x_position, y_position)
             else:
-                numberOfGoBack = min(5, (x_position * dir[direction][0]) % COL, y_position)
+                numberOfGoBack = min(5, COL - 1 - x_position, y_position)
             # very first starting point
             x_starting = x_position - numberOfGoBack * dir[direction][0]
             y_starting = y_position - numberOfGoBack * dir[direction][1]
@@ -134,41 +136,34 @@ class AIPlayer(object):
             return value
         if maximizingPlayer:
             maxEval = -math.inf
-            childMax = [-1, -1]
-            for k in range(self.COL):
-                for l in range(self.ROW):
-                    if self.validMove(status, k, l):
-                        new_val = self.evaluation(k, l, value, status, 1)
-                        status[k][l] = 1
-                        eval = self.miniMax(status, new_val, depth - 1, alpha, beta, False)
-                        if eval > maxEval:
-                            maxEval = eval
-                            childMax = [k, l]
-                            self.next_value = new_val
-                        alpha = max(alpha, eval)
-                        status[k][l] = 0
-                        if beta <= alpha:
-                            break
-            self.next_move = childMax
+            for position in self.childOf(status):
+                k, l = position[0], position[1]
+                new_val = self.evaluation(k, l, value, status, 1)
+                status[k][l] = 1
+                eval = self.miniMax(status, new_val, depth - 1, alpha, beta, False)
+                if eval > maxEval:
+                    maxEval = eval
+                    if depth == self.depth:
+                        self.next_move = [k, l]
+                        self.next_value = new_val
+                alpha = max(alpha, eval)
+                status[k][l] = 0
+                if beta <= alpha:
+                    break
             return maxEval
         else:
             minEval = math.inf
-            childMin = [-1, -1]
-            for k in range(self.COL):
-                for l in range(self.ROW):
-                    if self.validMove(status, k, l):
-                        new_val = self.evaluation(k, l, value, status, -1)
-                        status[k][l] = -1
-                        eval = self.miniMax(status, new_val, depth - 1, alpha, beta, True)
-                        if eval < minEval:
-                            minEval = eval
-                            childMin = [k, l]
-                            self.next_value = new_val
-                        beta = min(beta, eval)
-                        status[k][l] = 0
-                        if beta <= alpha:
-                            break
-            self.next_move = childMin
+            for position in self.childOf(status):
+                k, l = position[0], position[1]
+                new_val = self.evaluation(k, l, value, status, -1)
+                status[k][l] = -1
+                eval = self.miniMax(status, new_val, depth - 1, alpha, beta, True)
+                if eval < minEval:
+                    minEval = eval
+                beta = min(beta, eval)
+                status[k][l] = 0
+                if beta <= alpha:
+                    break
             return minEval
 
     def evaluation(self, new_x, new_y, currentBoardEval, status, turn):
@@ -183,8 +178,11 @@ class AIPlayer(object):
         return currentBoardEval + value_after - value_before
 
 
-    def validMove(self, status, k, l):
-        return status[k][l] == 0
+    def childOf(self, status):
+        for k in range(self.COL):
+            for l in range(self.ROW):
+                if status[k][l] == 0:
+                    yield [k, l]
 
 def startBoard():
     ai = AIPlayer(2, COL, ROW, create_pattern_dict())
