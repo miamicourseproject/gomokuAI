@@ -18,24 +18,7 @@ class Board(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if self.turnA:
-                self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, True)
-                self.value = self.aiplayer.next_value
-                self.status[self.aiplayer.next_move[0]][self.aiplayer.next_move[1]] = 1
-                self.turnA = not self.turnA
-            else:
-                if pygame.mouse.get_pressed()[0]:
-                    col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
-                    row1 = (pygame.mouse.get_pos()[1] - y_margin) // size
-                    # check and update the status
-                    if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
-                        # notice that this character is chosen
-                        print("dont choose again!")
-                        break
-                    else:
-                        self.status[col1][row1] = -1
-                        self.turnA = not self.turnA
-
+           
     def draw(self, surface):
         global size, x_margin, y_margin
         # tim cach sua lai cai nay
@@ -70,6 +53,7 @@ class ultility:
 
     @staticmethod
     def counting(x_position, y_position, pattern, COL, ROW, status):
+        print (pattern)
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
@@ -100,6 +84,7 @@ class ultility:
                     col1 = col1 + dir[direction][0]
                     index += 1
                 if index == length:
+                    print(pattern)
                     count += 1
         return count
 
