@@ -6,31 +6,35 @@ import tkinter as tk
 from tkinter import messagebox
 
 class Board(object):
-    def __init__(self, status, value, ROW, COL, aiplayer, pattern_dict):
+    def __init__(self, status, value, ROW, COL, pattern_dict):
         self.turnA = True
         self.status = status
         self.value = value
         self.ROW = ROW
         self.COL = COL
-        self.aiplayer = aiplayer
         self.pattern_dict = pattern_dict
 
     def listen(self):  # listen to the user
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-           
             if self.turnA:
-                self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, True)
-                ai_next_move_x = self.aiplayer.next_move[0]
-                ai_next_move_y = self.aiplayer.next_move[1]
-                self.value = self.aiplayer.evaluation(ai_next_move_x,ai_next_move_y,self.value,self.status,1)
-                print(self.value)
-                self.status[ai_next_move_x][ai_next_move_y] = 1
-                for pattern in self.pattern_dict:
-                    if ultility.counting(ai_next_move_x, ai_next_move_y, pattern, self.COL, self.ROW, self.status) > 0:
-                        print(pattern)
-                self.turnA = not self.turnA
+                if pygame.mouse.get_pressed()[0]:
+                    col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
+                    row1 = (pygame.mouse.get_pos()[1] - y_margin) // size
+                    # check and update the status
+                    if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
+                        # notice that this character is chosen
+                        print("dont choose again!")
+                        break
+                    else:
+                        self.value = self.evaluation(col1, row1, self.value, self.status,1)
+                        print(self.value)
+                        self.status[col1][row1] = 1
+                        for pattern in self.pattern_dict:
+                            if ultility.counting(col1,row1,pattern,self.COL,self.ROW,self.status) > 0:
+                                print(pattern)
+                        self.turnA = not self.turnA
             else:
                 if pygame.mouse.get_pressed()[0]:
                     col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
@@ -41,12 +45,11 @@ class Board(object):
                         print("dont choose again!")
                         break
                     else:
-                        self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,-1)
+                        self.value = self.evaluation(col1, row1, self.value, self.status, -1)
                         print(self.value)
                         self.status[col1][row1] = -1
                         for pattern in self.pattern_dict:
-                            if ultility.counting(col1, row1, pattern, self.COL, self.ROW,
-                                                 self.status) > 0:
+                            if ultility.counting(col1, row1, pattern, self.COL, self.ROW, self.status) > 0:
                                 print(pattern)
                         self.turnA = not self.turnA
 
@@ -75,7 +78,16 @@ class Board(object):
                 else:
                     text = font.render('o', True, (0, 0, 0))
                 surface.blit(text, (k * 40 + 20, l * 40))
-
+    def evaluation(self, new_x, new_y, currentBoardEval, status, turn):
+        value_before = 0
+        value_after = 0
+        for pattern in self.pattern_dict:
+            value_before += ultility.counting(new_x, new_y, pattern, self.COL, self.ROW, status) * self.pattern_dict[pattern]
+            status[new_x][new_y] = turn
+            value_after += ultility.counting(new_x, new_y, pattern, self.COL, self.ROW, status) * self.pattern_dict[
+                pattern]
+            status[new_x][new_y] = 0
+        return currentBoardEval + value_after - value_before
 
 class ultility:
     @staticmethod
@@ -84,7 +96,6 @@ class ultility:
 
     @staticmethod
     def counting(x_position, y_position, pattern, COL, ROW, status):
-        print (pattern)
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
@@ -104,7 +115,7 @@ class ultility:
             x_starting = x_position - numberOfGoBack * dir[direction][0]
             y_starting = y_position - numberOfGoBack * dir[direction][1]
             # loop through different possible patterns in a row/col/diag
-            for i in range(numberOfGoBack+1):
+            for i in range(numberOfGoBack):
                 # get a new starting point
                 row1 = y_starting + i*dir[direction][1]
                 col1 = x_starting + i*dir[direction][0]
@@ -115,13 +126,12 @@ class ultility:
                     col1 = col1 + dir[direction][0]
                     index += 1
                 if index == length:
-                    print(pattern)
                     count += 1
         return count
 
     @staticmethod
     def check_win(value):
-        return value % 10 != 0
+        return value % 10 == 1
 
 class AIPlayer(object):
     def __init__(self, depth, COL, ROW, pattern_dict):
@@ -167,23 +177,14 @@ class AIPlayer(object):
                             minEval = eval
                             childMin = [k, l]
                             self.next_value = new_val
-                        beta = min(beta, eval)
+                        beta = min(alpha, eval)
                         status[k][l] = 0
                         if beta <= alpha:
                             break
             self.next_move = childMin
             return minEval
 
-    def evaluation(self, new_x, new_y, currentBoardEval, status, turn):
-        value_before = 0
-        value_after = 0
-        for pattern in self.pattern_dict:
-            value_before += ultility.counting(new_x, new_y, pattern, self.COL, self.ROW, status) * self.pattern_dict[pattern]
-            status[new_x][new_y] = turn
-            value_after += ultility.counting(new_x, new_y, pattern, self.COL, self.ROW, status) * self.pattern_dict[
-                pattern]
-            status[new_x][new_y] = 0
-        return currentBoardEval + value_after - value_before
+
 
 
     def validMove(self, status, k, l):
@@ -193,7 +194,7 @@ def startBoard():
     ai = AIPlayer(2, COL, ROW, create_pattern_dict())
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, 0, COL, ROW, ai, create_pattern_dict())
+    key = Board(iniStatus, 0, COL, ROW, create_pattern_dict())
 
 
 def redraw(surface):
@@ -211,25 +212,25 @@ def create_pattern_dict():
     while (x < 2):
         y = -x
         # open3
-        pattern_dict[(0, x, x, x, 0)] = 1100 * x
+        pattern_dict[(0, x, x, x, 0)] = 100000*x
         # capped3_left
-        pattern_dict[(0, x, x, x, y)] = 1010 * x
+        pattern_dict[(0, x, x, x, y)] = 10000 * x
         # capped3_right
-        pattern_dict[(y, x, x, x, 0)] = 1010 * x
+        pattern_dict[(y, x, x, x, 0)] = 10000 * x
         # consecutive5
-        pattern_dict[(x, x, x, x, x)] = 100000000000 * x + 1
+        pattern_dict[(x, x, x, x, x)] = 10000000 * x + 1
         # gapped4_right
-        pattern_dict[(x, x, x, 0, x)] = 100000 * x
+        pattern_dict[(x, x, x, 0, x)] = 100050 * x
         # gapped4_left
-        pattern_dict[(x, 0, x, x, x)] = 100000 * x
+        pattern_dict[(x, 0, x, x, x)] = 100050 * x
         # gapped4_mid
-        pattern_dict[(x, x, 0, x, x)] = 1000000 * x
+        pattern_dict[(x, x, 0, x, x)] = 100050 * x
         # open4
-        pattern_dict[(0, x, x, x, x, 0)] = 100000000 * x
+        pattern_dict[(0, x, x, x, x, 0)] = 1000000 * x
         # capped4_left
-        pattern_dict[(0, x, x, x, x, y)] = 10000000 * x
+        pattern_dict[(0, x, x, x, x, y)] = 100050 * x
         # capped4_right
-        pattern_dict[(y, x, x, x, x, 0)] = 10000000 * x
+        pattern_dict[(y, x, x, x, x, 0)] = 100050 * x
 
         x += 2
     return pattern_dict
@@ -255,4 +256,18 @@ def main():
         if ultility.check_win(key.value):
             pygame.time.delay(50)
             start_game()
+
+
+
 main()
+# 0
+# 0
+# 0
+# 0
+# 0
+# -100000
+# 50
+# -100000
+# -10000
+# -110050
+# -110050
