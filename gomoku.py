@@ -2,8 +2,6 @@ from math import pi
 import math
 import random
 import pygame
-import tkinter as tk
-from tkinter import messagebox
 
 class Board(object):
     def __init__(self, status, value, ROW, COL, aiplayer, pattern_dict):
