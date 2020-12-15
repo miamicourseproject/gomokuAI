@@ -3,6 +3,19 @@ import math
 import random
 import pygame
 
+
+# Define variables at global scope first before using them
+x_margin = None
+y_margin = None
+size = None
+iniStatus = None
+key = None
+width = None 
+height = None
+score = None
+ROW = None
+COL = None
+
 class Board(object):
     def __init__(self, status, value, ROW, COL, aiplayer, pattern_dict):
         self.turnA = True
@@ -12,6 +25,7 @@ class Board(object):
         self.COL = COL
         self.aiplayer = aiplayer
         self.pattern_dict = pattern_dict
+        self.empty_cell = ROW * COL
 
     def listen(self):  # listen to the user
         for event in pygame.event.get():
@@ -23,12 +37,9 @@ class Board(object):
                 ai_next_move_x = self.aiplayer.next_move[0]
                 ai_next_move_y = self.aiplayer.next_move[1]
                 self.value = self.aiplayer.next_value
-                print(self.value)
                 self.status[ai_next_move_x][ai_next_move_y] = 1
-                for pattern in self.pattern_dict:
-                    if ultility.counting(ai_next_move_x, ai_next_move_y, pattern, self.COL, self.ROW, self.status) > 0:
-                        print(pattern)
                 self.turnA = not self.turnA
+                self.empty_cell = self.empty_cell - 1
             else:
                 if pygame.mouse.get_pressed()[0]:
                     col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
@@ -39,13 +50,10 @@ class Board(object):
                         print("dont choose again!")
                         break
                     else:
+                        self.empty_cell = self.empty_cell - 1
+                        print(self.empty_cell)
                         self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,-1)
-                        print(self.value)
                         self.status[col1][row1] = -1
-                        for pattern in self.pattern_dict:
-                            if ultility.counting(col1, row1, pattern, self.COL, self.ROW,
-                                                 self.status) > 0:
-                                print(pattern)
                         self.turnA = not self.turnA
 
     def draw(self, surface):
@@ -77,12 +85,11 @@ class Board(object):
 
 class ultility:
     @staticmethod
-    def check_in_bound(col1, row1, COL, ROW):
+    def checkInBound(col1, row1, COL, ROW):
         return 0 <= col1 < COL and 0 <= row1 < ROW
 
     @staticmethod
     def counting(x_position, y_position, pattern, COL, ROW, status):
-        print (pattern)
         # direction
         dir = [[1, 0], [1, 1], [0, 1], [-1, 1]]
         # (col, row)
@@ -109,18 +116,17 @@ class ultility:
                 row1 = y_starting + i*dir[direction][1]
                 col1 = x_starting + i*dir[direction][0]
                 index = 0
-                while index < length and ultility.check_in_bound(col1, row1, COL, ROW) \
+                while index < length and ultility.checkInBound(col1, row1, COL, ROW) \
                         and status[col1][row1] == pattern[index]:
                     row1 = row1 + dir[direction][1]
                     col1 = col1 + dir[direction][0]
                     index += 1
                 if index == length:
-                    print(pattern)
                     count += 1
         return count
 
     @staticmethod
-    def check_win(value):
+    def checkWin(value):
         return value % 10 != 0
 
 class AIPlayer(object):
@@ -133,7 +139,7 @@ class AIPlayer(object):
         self.next_move = [-1, -1]
         self.next_value = 0
     def miniMax(self, status, value, depth, alpha, beta, maximizingPlayer):
-        if depth == 0 or ultility.check_win(value):
+        if depth == 0 or ultility.checkWin(value):
             return value
         if maximizingPlayer:
             maxEval = -math.inf
@@ -186,22 +192,18 @@ class AIPlayer(object):
                     yield [k, l]
 
 def startBoard():
-    ai = AIPlayer(2, COL, ROW, create_pattern_dict())
+    ai = AIPlayer(2, COL, ROW, createPatternDict())
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, 0, COL, ROW, ai, create_pattern_dict())
+    key = Board(iniStatus, 0, COL, ROW, ai, createPatternDict())
 
 
-def redraw(surface):
+def reDraw(surface):
     surface.fill((0, 0, 0))
     key.draw(surface)
     pygame.display.update()
 
-
-def start_game():
-    startBoard()
-
-def create_pattern_dict():
+def createPatternDict():
     x = -1
     pattern_dict = {}
     while (x < 2):
@@ -226,15 +228,14 @@ def create_pattern_dict():
         pattern_dict[(0, x, x, x, x, y)] = 10000000 * x
         # capped4_right
         pattern_dict[(y, x, x, x, x, 0)] = 10000000 * x
-
         x += 2
     return pattern_dict
 
 def main():
     # prepare
     global width, height, score, ROW, COL
-    ROW = 15
-    COL = 15
+    ROW = 5
+    COL = 5
     score = 0
     pygame.init()
     width = 650
@@ -242,13 +243,13 @@ def main():
     frame = pygame.display.set_mode((width, height))
     frame.fill((0, 0, 0))
     # instantiate the game
-    start_game()
+    startBoard()
     # main loop
     flag = True
     while flag:
         key.listen()
-        redraw(frame)
-        if ultility.check_win(key.value):
+        reDraw(frame)
+        if ultility.checkWin(key.value):
             pygame.time.delay(50)
-            start_game()
+            startBoard()
 main()
