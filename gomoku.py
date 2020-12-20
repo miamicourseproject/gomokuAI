@@ -236,12 +236,8 @@ def reDraw(surface):
     key.draw(surface)
     pygame.display.update()
 
-<<<<<<< HEAD
-# A pattern dictionary of winning moves
-=======
 # this method contains different patterns with their values
 # These adapt from https://linyanghe.github.io/projects/resources/Gomuku.pdf
->>>>>>> 47929b4296587ea3884de2c12584bc4ca9b28f23
 def createPatternDict():
     x = -1
     pattern_dict = {}
