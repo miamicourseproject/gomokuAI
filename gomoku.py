@@ -4,6 +4,7 @@ import random
 import pygame
 import sys
 from pygame.locals import *
+from button import button
 
 # Define variables at global scope first before using them
 x_margin = None
@@ -235,6 +236,7 @@ def reDraw(surface):
     key.draw(surface)
     pygame.display.update()
 
+# A pattern dictionary of winning moves
 def createPatternDict():
     x = -1
     pattern_dict = {}
@@ -263,16 +265,48 @@ def createPatternDict():
         x += 2
     return pattern_dict
 
+# Create Buttons Class
+class button():
+    def __init__(self, color, x,y,width,height, text=''):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+
+    def draw(self,win,outline=None):
+        #Call this method to draw the button on the screen
+        if outline:
+            pygame.draw.rect(win, outline, (self.x-2,self.y-2,self.width+4,self.height+4),0)
+            
+        pygame.draw.rect(win, self.color, (self.x,self.y,self.width,self.height),0)
+        
+        if self.text != '':
+            font = pygame.font.SysFont('comicsans', 30)
+            text = font.render(self.text, 1, (0,0,0))
+            win.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
+
+    def isOver(self, pos):
+        #Pos is the mouse position or a tuple of (x,y) coordinates
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+            
+        return False
+
+#Main Screen
 def main():
     # prepare
     global width, height, score, ROW, COL
-    ROW = 15
-    COL = 15
+    ROW = 6
+    COL = 6
     score = 0
     pygame.init()
     width = 650
     height = width
     frame = pygame.display.set_mode((width, height))
+    pygame.display.set_caption('Game')
     frame.fill((0, 0, 0))
     # instantiate the game
     startBoard()
@@ -286,71 +320,71 @@ def main():
         if ultility.checkWin(key.value):
             pygame.time.delay(50)
             startBoard()
-
-mainClock = pygame.time.Clock()
-pygame.init()
-pygame.display.set_caption('game base')
-screen = pygame.display.set_mode((500, 500),0,32)
  
-font = pygame.font.SysFont(None, 20)
- 
-def draw_text(text, font, color, surface, x, y):
-    textobj = font.render(text, 1, color)
-    textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
-    surface.blit(textobj, textrect)
- 
-click = False
- 
-def main_menu():
+#Credits Screen
+def credit():
+    pygame.init()
+    pygame.display.set_caption('credit')
+    screen = pygame.display.set_mode((700, 700),0,32)
+    screen.fill(black)
+    cre = "This is the project of Thomas"
     while True:
-        screen.fill((0,0,0))
-        draw_text('main menu', font, (255, 255, 255), screen, 20, 20)
- 
-        mx, my = pygame.mouse.get_pos()
- 
-        button_1 = pygame.Rect(50, 100, 200, 50)
-        button_2 = pygame.Rect(50, 200, 200, 50)
-        if button_1.collidepoint((mx, my)):
-            if click:
-                main()
-        if button_2.collidepoint((mx, my)):
-            if click:
-                options()
-        pygame.draw.rect(screen, (255, 0, 0), button_1)
-        pygame.draw.rect(screen, (255, 0, 0), button_2)
- 
-        click = False
+        pygame.display.update()
+        font = pygame.font.SysFont('comicsans', 20)
+        text = font.render(cre, 1, (255,255,255))
+        screen.blit(text, (20, 20))
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-            if event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
- 
+
+white = (255,255,255)
+black = (0,0,0)
+gray = (128,128,128)
+lessGray = (192,192,192)
+
+# Main Menu
+def main_menu():
+    pygame.init()
+    pygame.display.set_caption('Start')
+    screen = pygame.display.set_mode((700, 700),0,32)
+    screen.fill(black)
+    wide, high= pygame.display.get_surface().get_size()
+    # Initate Buttons
+    startButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start")
+    startButton.draw(screen, white)
+    creditButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Credit")
+    creditButton.draw(screen, white)
+    while True:
+        # Get position of the mouse
+        pos = pygame.mouse.get_pos()
+        # Update the screen
         pygame.display.update()
-        mainClock.tick(60)
- 
-def options():
-    running = True
-    while running:
-        screen.fill((0,0,0))
- 
-        draw_text('options', font, (255, 255, 255), screen, 20, 20)
+        # Draw Buttons
+        startButton.draw(screen)
+        creditButton.draw(screen)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    running = False
-        
-        pygame.display.update()
-        mainClock.tick(60)
- 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (startButton.isOver(pos)):
+                    main()
+                    
+                if (creditButton.isOver(pos)):
+                    credit()
+                    
+            if event.type == pygame.MOUSEMOTION:
+                if (startButton.isOver(pos)):
+                    startButton.color = lessGray
+                else:
+                    startButton.color = gray
+
+                if (creditButton.isOver(pos)):
+                    creditButton.color = lessGray
+                else:
+                    creditButton.color = gray
+    
+
+
 main_menu()
