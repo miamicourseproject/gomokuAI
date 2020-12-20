@@ -143,7 +143,7 @@ class ultility:
 
     @staticmethod
     def checkWin(value):
-        return value % 10 != 0 # all pattern's points are divisible by 10 except for the winning one
+        return value > 900000 or value < -900000  #test???
 
 class AIPlayer(object):
     def __init__(self, depth, COL, ROW, pattern_dict):
@@ -236,32 +236,64 @@ def reDraw(surface):
     key.draw(surface)
     pygame.display.update()
 
+<<<<<<< HEAD
 # A pattern dictionary of winning moves
+=======
+# this method contains different patterns with their values
+# These adapt from https://linyanghe.github.io/projects/resources/Gomuku.pdf
+>>>>>>> 47929b4296587ea3884de2c12584bc4ca9b28f23
 def createPatternDict():
     x = -1
     pattern_dict = {}
     while (x < 2):
         y = -x
-        # open3
-        pattern_dict[(0, x, x, x, 0)] = 1100 * x
-        # capped3_left
-        pattern_dict[(0, x, x, x, y)] = 1010 * x
-        # capped3_right
-        pattern_dict[(y, x, x, x, 0)] = 1010 * x
-        # consecutive5
-        pattern_dict[(x, x, x, x, x)] = 100000000000 * x + 1
-        # gapped4_right
-        pattern_dict[(x, x, x, 0, x)] = 100000 * x
-        # gapped4_left
-        pattern_dict[(x, 0, x, x, x)] = 100000 * x
-        # gapped4_mid
-        pattern_dict[(x, x, 0, x, x)] = 1000000 * x
-        # open4
-        pattern_dict[(0, x, x, x, x, 0)] = 100000000 * x
-        # capped4_left
-        pattern_dict[(0, x, x, x, x, y)] = 10000000 * x
-        # capped4_right
-        pattern_dict[(y, x, x, x, x, 0)] = 10000000 * x
+        # long_5
+        pattern_dict[(x, x, x, x, x)] = 1000000 * x
+        # live_4
+        pattern_dict[(0, x, x, x, x, 0)] = 1000 * x
+        # go_4
+        pattern_dict[(0, x, x, x, x, y)] = 500 * x
+        pattern_dict[(y, x, x, x, x, 0)] = 500 * x
+        pattern_dict[(0, x, x, x, 0, x, 0)] = 500 * x
+        pattern_dict[(0, x, 0, x, x, x, 0)] = 500 * x
+        pattern_dict[(0, x, x, 0, x, x, 0)] = 500 * x
+        # dead_4
+        pattern_dict[(y, x, x, x, x, y)] = -5 * x
+        # live_3
+        pattern_dict[(0, x, x, x, 0)] = 200 * x
+        pattern_dict[(0, x, 0, x, x, 0)] = 200 * x
+        pattern_dict[(0, x, x, 0, x, 0)] = 200 * x
+        # sleep_3
+        pattern_dict[(0, 0, x, x, x, y)] = 50 * x
+        pattern_dict[(y, x, x, x, 0, 0)] = 50 * x
+        pattern_dict[(0, x, 0, x, x, y)] = 50 * x
+        pattern_dict[(y, x, x, 0, x, 0)] = 50 * x
+        pattern_dict[(0, x, x, 0, x, y)] = 50 * x
+        pattern_dict[(y, x, 0, x, x, 0)] = 50 * x
+        pattern_dict[(x, 0, 0, x, x)] = 50 * x
+        pattern_dict[(x, x, 0, 0, x)] = 50 * x
+        pattern_dict[(x, 0, x, 0, x)] = 50 * x
+        pattern_dict[(y, 0, x, x, x, 0, y)] = 50 * x
+        # dead_3
+        pattern_dict[(y, x, x, x, y)] = -5 * x
+        # live_2
+        pattern_dict[(0, 0, x, x, 0)] = 5 * x
+        pattern_dict[(0, x, x, 0, 0)] = 5 * x
+        pattern_dict[(0, x, 0, x, 0)] = 5 * x
+        pattern_dict[(0, x, 0, 0, x, 0)] = 5 * x
+        # sleep_2
+        pattern_dict[(0, 0, 0, x, x, y)] = 3 * x
+        pattern_dict[(y, x, x, 0, 0, 0)] = 3 * x
+        pattern_dict[(0, 0, x, 0, x, y)] = 3 * x
+        pattern_dict[(y, x, 0, x, 0, 0)] = 3 * x
+        pattern_dict[(0, x, 0, 0, x, y)] = 3 * x
+        pattern_dict[(y, x, 0, 0, x, 0)] = 3 * x
+        pattern_dict[(x, 0, 0, 0, x)] = 3 * x
+        pattern_dict[(y, 0, x, 0, x, 0, y)] = 3 * x
+        pattern_dict[(y, 0, x, x, 0, 0, y)] = 3 * x
+        pattern_dict[(y, 0, 0, x, x, 0, y)] = 3 * x
+        # dead_2
+        pattern_dict[(y, x, x, y)] = -5 * x
         x += 2
     return pattern_dict
 
@@ -299,8 +331,8 @@ class button():
 def main():
     # prepare
     global width, height, score, ROW, COL
-    ROW = 6
-    COL = 6
+    ROW = 11
+    COL = 11
     score = 0
     pygame.init()
     width = 650
