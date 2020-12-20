@@ -127,12 +127,22 @@ def credit():
     pygame.display.set_caption('credit')
     screen = pygame.display.set_mode((700, 700),0,32)
     screen.fill(black)
-    cre = "This is the project of Thomas"
+    wide, high = pygame.display.get_surface().get_size()
+    creditForTeam = "This Project is made by Duc Nam, Hieu Phan and Thomas Nguyen"
+    creditForBackEnd = "Algorithms: Duc Nam and Hieu Phan"
+    creditForFrontEnd = "UI/ Design: Thomas Nguyen"
     while True:
         pygame.display.update()
-        font = pygame.font.SysFont('comicsans', 20)
-        text = font.render(cre, 1, (255,255,255))
-        screen.blit(text, (20, 20))
+        font = pygame.font.SysFont('Times New Roman', 20)
+        cre1 = font.render(creditForTeam, False, white)
+        cre2 = font.render(creditForBackEnd, False, white)
+        cre3 = font.render(creditForFrontEnd, False, white)
+        
+        screen.blit(cre1, (wide / 12, high / 20))
+        screen.blit(cre2, (wide / 12, high / 20 + 30))
+        screen.blit(cre3, (wide / 12, high / 20 + 60))
+        
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
