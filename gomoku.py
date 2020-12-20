@@ -128,9 +128,14 @@ def credit():
     screen = pygame.display.set_mode((700, 700),0,32)
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
+
     creditForTeam = "This Project is made by Duc Nam, Hieu Phan and Thomas Nguyen"
     creditForBackEnd = "Algorithms: Duc Nam and Hieu Phan"
     creditForFrontEnd = "UI/ Design: Thomas Nguyen"
+
+    backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
+    backButton.draw(screen, white)
+
     while True:
         pygame.display.update()
         font = pygame.font.SysFont('Times New Roman', 20)
@@ -141,12 +146,24 @@ def credit():
         screen.blit(cre1, (wide / 12, high / 20))
         screen.blit(cre2, (wide / 12, high / 20 + 30))
         screen.blit(cre3, (wide / 12, high / 20 + 60))
-        
+
+        pos = pygame.mouse.get_pos()
+        backButton.draw(screen)
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (backButton.isOver(pos)):
+                    main_menu()
+                    
+            if event.type == pygame.MOUSEMOTION:
+                if (backButton.isOver(pos)):
+                    backButton.color = lessGray
+                else:
+                    backButton.color = gray
 
 # Main Menu
 def main_menu():
@@ -155,12 +172,17 @@ def main_menu():
     screen = pygame.display.set_mode((700, 700),0,32)
     screen.fill(black)
     wide, high= pygame.display.get_surface().get_size()
+    # Draw the title
+    title = "TIC-TAC-TOE"
     # Initate Buttons
     startButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start")
     startButton.draw(screen, white)
     creditButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Credit")
     creditButton.draw(screen, white)
     while True:
+        font = pygame.font.SysFont('Times New Roman', 40)
+        gameTitle = font.render(title, False, white)
+        screen.blit(gameTitle, (wide / 3, high / 20))
         # Get position of the mouse
         pos = pygame.mouse.get_pos()
         # Update the screen
@@ -192,4 +214,4 @@ def main_menu():
     
 
 
-credit()
+main_menu()
