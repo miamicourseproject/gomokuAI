@@ -136,7 +136,7 @@ def credit():
     wide, high = pygame.display.get_surface().get_size()
 
     creditForTeam = "This Project is made by Duc Nam, Hieu Phan and Thomas Nguyen"
-    creditForBackEnd = "Algorithms: Duc Nam and Hieu Phan"
+    creditForBackEnd = "Algorithms + Game Logic: Duc Nam and Hieu Phan"
     creditForFrontEnd = "UI/ Design: Thomas Nguyen"
 
     backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
@@ -183,7 +183,7 @@ def subStart():
 
     startButton =  button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start Game")
     startButton.draw(screen, white)
-    backButton = button(gray, wide / 4 , high / 2, wide / 2, high / 8, "Back to Main Menu")
+    backButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)  
 
     font = pygame.font.SysFont('Times New Roman', 40)
@@ -235,8 +235,10 @@ def mainMenu():
     # Initate Buttons
     startButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start")
     startButton.draw(screen, white)
-    creditButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Credit")
+    creditButton = button(gray, wide / 4 , 3 * high / 8 + 20, wide / 2, high / 8, "Credit")
     creditButton.draw(screen, white)
+    highScoreButton = button(gray, wide / 4 , high / 2 + 40, wide / 2, high / 8, "High Score")
+    highScoreButton.draw(screen, white)
     while True:
         event_list = pygame.event.get()
 
@@ -246,7 +248,8 @@ def mainMenu():
         # Draw Buttons
         startButton.draw(screen)
         creditButton.draw(screen)
-
+        highScoreButton.draw(screen)
+        
         for event in event_list:
             if event.type == QUIT:
                 pygame.quit()
@@ -257,17 +260,22 @@ def mainMenu():
                     subStart() 
                 if (creditButton.isOver(pos)):
                     credit()
+                if (highScoreButton.isOver(pos)):
+                    pass
                     
             if event.type == pygame.MOUSEMOTION:
                 if (startButton.isOver(pos)):
                     startButton.color = lessGray
                 else:
                     startButton.color = gray
-
                 if (creditButton.isOver(pos)):
                     creditButton.color = lessGray
                 else:
                     creditButton.color = gray
+                if (highScoreButton.isOver(pos)):
+                    highScoreButton.color = lessGray
+                else:
+                    highScoreButton.color = gray
         pygame.display.update()
 
 mainMenu()
