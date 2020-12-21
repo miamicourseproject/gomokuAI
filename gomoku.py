@@ -8,6 +8,8 @@ from button import button
 from board import Board
 from ultility import ultility
 from AIPlayer import AIPlayer
+from InputBox import InputBox
+from Dropdown import DropDown
 
 # Define variables at global scope first before using them
 x_margin = None
@@ -26,6 +28,10 @@ white = (255,255,255)
 black = (0,0,0)
 gray = (128,128,128)
 lessGray = (192,192,192)
+COLOR_INACTIVE = (100, 80, 255)
+COLOR_ACTIVE = (100, 200, 255)
+COLOR_LIST_INACTIVE = (255, 100, 100)
+COLOR_LIST_ACTIVE = (255, 150, 150)
 
 # initialize board
 def startBoard():
@@ -135,18 +141,19 @@ def credit():
 
     backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)
+    pygame.display.update()
+
+    font = pygame.font.SysFont('Times New Roman', 20)
+    cre1 = font.render(creditForTeam, False, white)
+    cre2 = font.render(creditForBackEnd, False, white)
+    cre3 = font.render(creditForFrontEnd, False, white)
+        
+    screen.blit(cre1, (wide / 12, high / 20))
+    screen.blit(cre2, (wide / 12, high / 20 + 30))
+    screen.blit(cre3, (wide / 12, high / 20 + 60))
+
 
     while True:
-        pygame.display.update()
-        font = pygame.font.SysFont('Times New Roman', 20)
-        cre1 = font.render(creditForTeam, False, white)
-        cre2 = font.render(creditForBackEnd, False, white)
-        cre3 = font.render(creditForFrontEnd, False, white)
-        
-        screen.blit(cre1, (wide / 12, high / 20))
-        screen.blit(cre2, (wide / 12, high / 20 + 30))
-        screen.blit(cre3, (wide / 12, high / 20 + 60))
-
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
         pygame.display.update()
@@ -165,39 +172,80 @@ def credit():
                 else:
                     backButton.color = gray
 
+def subStart():
+    pygame.init()
+    pygame.display.set_caption('credit')
+    screen = pygame.display.set_mode((700, 700),0,32)
+    screen.fill(black)
+    wide, high = pygame.display.get_surface().get_size()
+
+    titleText= "Choose the size of your board"
+
+    backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
+    backButton.draw(screen, white)   
+
+    while True:
+
+        font = pygame.font.SysFont('Times New Roman', 20)
+        cre1 = font.render(titleText, False, white)
+        screen.blit(cre1, (wide / 12, high / 20))
+
+        pos = pygame.mouse.get_pos()
+        backButton.draw(screen)
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (backButton.isOver(pos)):
+                    main_menu()
+
+            if event.type == pygame.MOUSEMOTION:
+                if (backButton.isOver(pos)):
+                    backButton.color = lessGray
+                else:
+                    backButton.color = gray
+
+
 # Main Menu
 def main_menu():
     pygame.init()
     pygame.display.set_caption('Start')
-    screen = pygame.display.set_mode((700, 700),0,32)
+    screen = pygame.display.set_mode((700, 700))
     screen.fill(black)
     wide, high= pygame.display.get_surface().get_size()
+
     # Draw the title
     title = "TIC-TAC-TOE"
+    font = pygame.font.SysFont('Times New Roman', 40)
+    gameTitle = font.render(title, False, white)
+    screen.blit(gameTitle, (wide / 3, high / 20))
+
     # Initate Buttons
     startButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start")
     startButton.draw(screen, white)
     creditButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Credit")
     creditButton.draw(screen, white)
     while True:
-        font = pygame.font.SysFont('Times New Roman', 40)
-        gameTitle = font.render(title, False, white)
-        screen.blit(gameTitle, (wide / 3, high / 20))
+        event_list = pygame.event.get()
+
         # Get position of the mouse
         pos = pygame.mouse.get_pos()
-        # Update the screen
-        pygame.display.update()
+
         # Draw Buttons
         startButton.draw(screen)
         creditButton.draw(screen)
-        for event in pygame.event.get():
+
+        for event in event_list:
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if (startButton.isOver(pos)):
-                    main()
-                    
+                    subStart() 
                 if (creditButton.isOver(pos)):
                     credit()
                     
@@ -211,7 +259,6 @@ def main_menu():
                     creditButton.color = lessGray
                 else:
                     creditButton.color = gray
-    
-
+        pygame.display.update()
 
 main_menu()

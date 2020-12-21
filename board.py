@@ -1,6 +1,10 @@
 import pygame
 import math
 
+x_margin = None
+y_margin = None
+size = None
+
 class Board(object):
     def __init__(self, status, value, ROW, COL, aiplayer, patternDict):
         # turnA means AI's turn while !turnA is human's turn
@@ -47,7 +51,6 @@ class Board(object):
 
     def draw(self, surface):
         global size, x_margin, y_margin
-        # tim cach sua lai cai nay
         # set size of each square and board's margin
         size = 40
         x_margin = 10
