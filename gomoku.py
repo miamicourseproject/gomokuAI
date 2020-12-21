@@ -46,7 +46,7 @@ def reDraw(surface):
     pygame.display.update()
 
 # this method contains different patterns with their values
-# These adapt from https://linyanghe.github.io/projects/resources/Gomuku.pdf
+# These adapt from this report https://linyanghe.github.io/projects/resources/Gomuku.pdf
 def createPatternDict():
     x = -1
     patternDict = {}
