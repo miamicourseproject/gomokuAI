@@ -77,7 +77,7 @@ while run:
     if selected_option >= 0:
         list1.main = list1.options[selected_option]
 
-    # screen.fill((255, 255, 255))
+    screen.fill((255, 255, 255))
     list1.draw(screen)
     pg.display.update()
     

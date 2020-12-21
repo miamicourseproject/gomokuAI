@@ -103,11 +103,11 @@ def createPatternDict():
     return patternDict
 
 #Main Screen
-def main():
+def main(size = 8):
     # prepare
     global width, height, score, ROW, COL
-    ROW = 8
-    COL = 8
+    ROW = size
+    COL = size
     score = 0
     pygame.init()
     height, width = 650, 650
@@ -179,23 +179,29 @@ def subStart():
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
 
-    titleText= "Choose the size of your board"
+    sizeList = [5,6,7,8,9,10]
+    size = 5 # default value
 
-    startButton =  button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start Game")
+    titleText= "Choose the size of your board"
+    startButton =  button(gray, wide / 4 , high / 7, wide / 2, high / 8, "Start Game")
     startButton.draw(screen, white)
-    backButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Back to Main Menu")
+    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)  
 
     font = pygame.font.SysFont('Times New Roman', 40)
     title = font.render(titleText, False, white)
     screen.blit(title, (wide / 6, high / 20))
 
+    sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , 15 * high / 56 + 20, wide / 2, high / 15, 
+    pygame.font.SysFont("Times New Roman", 30), "Select Mode", ["5x5", "6x6", "7x7", "8x8", "9x9", "10x10"])
+
     while True:
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
         startButton.draw(screen)
         pygame.display.update()
-        for event in pygame.event.get():
+        event_list = pygame.event.get()
+        for event in event_list:
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
@@ -204,7 +210,7 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
-                    main()
+                    main(size)
 
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):
@@ -216,7 +222,14 @@ def subStart():
                     startButton.color = lessGray
                 else:
                     startButton.color = gray
-
+        selectedOption = sizeDropDown.update(event_list,pos)
+        if selectedOption >= 0:
+            sizeDropDown.main = sizeDropDown.options[selectedOption]
+            size = sizeList[selectedOption]
+        screen.fill(black)
+        sizeDropDown.draw(screen)
+        screen.blit(title, (wide / 6, high / 20))
+    pygame.display.update()
 
 # Main Menu
 def mainMenu():
