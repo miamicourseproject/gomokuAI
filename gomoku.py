@@ -261,4 +261,4 @@ def main_menu():
                     creditButton.color = gray
         pygame.display.update()
 
-main_menu()
+main()
