@@ -8,9 +8,9 @@ from button import button
 from board import Board
 from ultility import ultility
 from AIPlayer import AIPlayer
-from InputBox import InputBox
 from Dropdown import DropDown
 from pathlib import Path
+from InputBox import InputBox
 
 # Define variables at global scope first before using them
 x_margin = None
@@ -26,7 +26,7 @@ COL = None
 
 # Color code
 white = (255,255,255)
-black = (0,0,0)
+black = (30,30,30)
 gray = (128,128,128)
 lessGray = (192,192,192)
 COLOR_INACTIVE = (100, 80, 255)
@@ -114,7 +114,7 @@ def main(size = 8):
     height, width = 650, 650
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption('Game')
-    screen.fill((0, 0, 0))
+    screen.fill(black)
     # instantiate the game
     startBoard()
     # main loop
@@ -184,26 +184,37 @@ def subStart():
     sizeList = [5,6,7,8,9,10]
     size = 5 # default value
 
+    # create buttons
     titleText= "Choose the size of your board"
     startButton =  button(gray, wide / 4 , high / 7, wide / 2, high / 8, "Start Game")
     startButton.draw(screen, white)
     backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)  
 
+    # create title
     font = pygame.font.SysFont('Times New Roman', 40)
     title = font.render(titleText, False, white)
     screen.blit(title, (wide / 6, high / 20))
-
-    sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , 15 * high / 56 + 20, wide / 2, high / 15, 
+    
+    # create dropdown
+    sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , high / 3 + 20, wide / 2, high / 15, 
     pygame.font.SysFont("Times New Roman", 30), "Select Mode", ["5x5", "6x6", "7x7", "8x8", "9x9", "10x10"])
+
+    # create input field
+    nameInput = InputBox(wide / 4, 15 * high / 56 + 20, wide / 2, high / 20, "Fill in your name")
 
     while True:
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
         startButton.draw(screen)
+        nameInput.draw(screen)
         pygame.display.update()
         event_list = pygame.event.get()
+
         for event in event_list:
+            nameInput.handle_event(event)
+            nameInput.update()
+
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
@@ -224,16 +235,22 @@ def subStart():
                     startButton.color = lessGray
                 else:
                     startButton.color = gray
+
         selectedOption = sizeDropDown.update(event_list,pos)
+
         if selectedOption >= 0:
             sizeDropDown.main = sizeDropDown.options[selectedOption]
             size = sizeList[selectedOption]
+
         screen.fill(black)
+        nameInput.draw(screen)
         sizeDropDown.draw(screen)
         screen.blit(title, (wide / 6, high / 20))
+
     pygame.display.update()
 
-def HighScore():
+#High Score Menu
+def highScore():
     pygame.init()
     pygame.display.set_caption('High Score')
     screen = pygame.display.set_mode((700, 700))
@@ -275,7 +292,7 @@ def HighScore():
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
         pygame.display.update()
-        
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -312,9 +329,9 @@ def mainMenu():
     creditButton.draw(screen, white)
     highScoreButton = button(gray, wide / 4 , high / 2 + 40, wide / 2, high / 8, "High Score")
     highScoreButton.draw(screen, white)
+
     while True:
         event_list = pygame.event.get()
-
         # Get position of the mouse
         pos = pygame.mouse.get_pos()
 
@@ -334,7 +351,7 @@ def mainMenu():
                 if (creditButton.isOver(pos)):
                     credit()
                 if (highScoreButton.isOver(pos)):
-                    HighScore()
+                    highScore()
                     
             if event.type == pygame.MOUSEMOTION:
                 if (startButton.isOver(pos)):
@@ -351,4 +368,4 @@ def mainMenu():
                     highScoreButton.color = gray
         pygame.display.update()
 
-mainMenu()
+subStart()

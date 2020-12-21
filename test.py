@@ -1,85 +1,82 @@
 import pygame as pg
 
-class DropDown():
-
-    def __init__(self, color_menu, color_option, x, y, w, h, font, main, options):
-        self.color_menu = color_menu
-        self.color_option = color_option
-        self.rect = pg.Rect(x, y, w, h)
-        self.font = font
-        self.main = main
-        self.options = options
-        self.draw_menu = False
-        self.menu_active = False
-        self.active_option = -1
-
-    def draw(self, surf):
-        pg.draw.rect(surf, self.color_menu[self.menu_active], self.rect, 0)
-        msg = self.font.render(self.main, 1, (0, 0, 0))
-        surf.blit(msg, msg.get_rect(center = self.rect.center))
-
-        if self.draw_menu:
-            for i, text in enumerate(self.options):
-                rect = self.rect.copy()
-                rect.y += (i+1) * self.rect.height
-                pg.draw.rect(surf, self.color_option[1 if i == self.active_option else 0], rect, 0)
-                msg = self.font.render(text, 1, (0, 0, 0))
-                surf.blit(msg, msg.get_rect(center = rect.center))
-
-    def update(self, event_list):
-        mpos = pg.mouse.get_pos()
-        self.menu_active = self.rect.collidepoint(mpos)
-        
-        self.active_option = -1
-        for i in range(len(self.options)):
-            rect = self.rect.copy()
-            rect.y += (i+1) * self.rect.height
-            if rect.collidepoint(mpos):
-                self.active_option = i
-                break
-
-        if not self.menu_active and self.active_option == -1:
-            self.draw_menu = False
-
-        for event in event_list:
-            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-                if self.menu_active:
-                    self.draw_menu = not self.draw_menu
-                elif self.draw_menu and self.active_option >= 0:
-                    self.draw_menu = False
-                    return self.active_option
-        return -1
 
 pg.init()
-screen = pg.display.set_mode((700, 700))
+screen = pg.display.set_mode((640, 480))
+COLOR_INACTIVE = pg.Color('lightskyblue3')
+COLOR_ACTIVE = pg.Color('dodgerblue2')
+FONT = pg.font.Font(None, 32)
 
-COLOR_INACTIVE = (100, 80, 255)
-COLOR_ACTIVE = (100, 200, 255)
-COLOR_LIST_INACTIVE = (255, 100, 100)
-COLOR_LIST_ACTIVE = (255, 150, 150)
 
-list1 = DropDown(
-    [COLOR_INACTIVE, COLOR_ACTIVE],
-    [COLOR_LIST_INACTIVE, COLOR_LIST_ACTIVE],
-    50, 50, 200, 50, 
-    pg.font.SysFont(None, 30), 
-    "Select Mode", ["Calibration", "Test", "Love"])
+class InputBox:
 
-run = True
-while run:
+    def __init__(self, x, y, w, h, text=''):
+        self.rect = pg.Rect(x, y, w, h)
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.txt_surface = FONT.render(text, True, self.color)
+        self.active = False
 
-    event_list = pg.event.get()
-    for event in event_list:
-        if event.type == pg.QUIT:
-            run = False
+    def handle_event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect.
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable.
+                self.active = not self.active
+            else:
+                self.active = False
+            # Change the current color of the input box.
+            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        if event.type == pg.KEYDOWN:
+            if self.active:
+                if event.key == pg.K_RETURN:
+                    print(self.text)
+                    self.text = ''
+                elif event.key == pg.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                # Re-render the text.
+                self.txt_surface = FONT.render(self.text, True, self.color)
 
-    selected_option = list1.update(event_list)
-    if selected_option >= 0:
-        list1.main = list1.options[selected_option]
+    def update(self):
+        # Resize the box if the text is too long.
+        width = max(self.rect.w, self.txt_surface.get_width()+10)
+        self.rect.w = width
 
-    screen.fill((255, 255, 255))
-    list1.draw(screen)
-    pg.display.update()
-    
-pg.quit()
-exit()
+    def draw(self, screen):
+        # Blit the text.
+        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        # Blit the rect.
+        pg.draw.rect(screen, self.color, self.rect, 2)
+
+
+
+def main():
+    clock = pg.time.Clock()
+    input_box1 = InputBox(100, 100, 600, 32)
+    input_box2 = InputBox(100, 300, 140, 32)
+    input_boxes = [input_box1, input_box2]
+    done = False
+
+    while not done:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                done = True
+            for box in input_boxes:
+                box.handle_event(event)
+
+        for box in input_boxes:
+            box.update()
+
+        screen.fill((30, 30, 30))
+        for box in input_boxes:
+            box.draw(screen)
+
+        pg.display.flip()
+        clock.tick(30)
+
+
+if __name__ == '__main__':
+    main()
+    pg.quit()
