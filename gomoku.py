@@ -181,17 +181,19 @@ def subStart():
 
     titleText= "Choose the size of your board"
 
-    backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
-    backButton.draw(screen, white)   
+    startButton =  button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start Game")
+    startButton.draw(screen, white)
+    backButton = button(gray, wide / 4 , high / 2, wide / 2, high / 8, "Back to Main Menu")
+    backButton.draw(screen, white)  
 
     font = pygame.font.SysFont('Times New Roman', 40)
     title = font.render(titleText, False, white)
-    
     screen.blit(title, (wide / 6, high / 20))
 
     while True:
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
+        startButton.draw(screen)
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -201,12 +203,19 @@ def subStart():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if (backButton.isOver(pos)):
                     mainMenu()
-                    
+                if (startButton.isOver(pos)):
+                    main()
+
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):
                     backButton.color = lessGray
                 else:
                     backButton.color = gray
+
+                if (startButton.isOver(pos)):
+                    startButton.color = lessGray
+                else:
+                    startButton.color = gray
 
 
 # Main Menu
