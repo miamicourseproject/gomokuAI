@@ -164,7 +164,7 @@ def credit():
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if (backButton.isOver(pos)):
-                    main_menu()
+                    mainMenu()
                     
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):
@@ -184,15 +184,15 @@ def subStart():
     backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)   
 
+    font = pygame.font.SysFont('Times New Roman', 40)
+    title = font.render(titleText, False, white)
+    
+    screen.blit(title, (wide / 6, high / 20))
+
     while True:
-
-        font = pygame.font.SysFont('Times New Roman', 20)
-        cre1 = font.render(titleText, False, white)
-        screen.blit(cre1, (wide / 12, high / 20))
-
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
-        
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -200,8 +200,8 @@ def subStart():
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if (backButton.isOver(pos)):
-                    main_menu()
-
+                    mainMenu()
+                    
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):
                     backButton.color = lessGray
@@ -210,7 +210,7 @@ def subStart():
 
 
 # Main Menu
-def main_menu():
+def mainMenu():
     pygame.init()
     pygame.display.set_caption('Start')
     screen = pygame.display.set_mode((700, 700))
@@ -261,4 +261,4 @@ def main_menu():
                     creditButton.color = gray
         pygame.display.update()
 
-main()
+mainMenu()
