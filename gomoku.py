@@ -10,6 +10,7 @@ from ultility import ultility
 from AIPlayer import AIPlayer
 from InputBox import InputBox
 from Dropdown import DropDown
+from pathlib import Path
 
 # Define variables at global scope first before using them
 x_margin = None
@@ -139,7 +140,7 @@ def credit():
     creditForBackEnd = "Algorithms + Game Logic: Duc Nam and Hieu Phan"
     creditForFrontEnd = "UI/ Design: Thomas Nguyen"
 
-    backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
+    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)
     pygame.display.update()
 
@@ -172,6 +173,7 @@ def credit():
                 else:
                     backButton.color = gray
 
+# Substart Menu
 def subStart():
     pygame.init()
     pygame.display.set_caption('credit')
@@ -231,13 +233,71 @@ def subStart():
         screen.blit(title, (wide / 6, high / 20))
     pygame.display.update()
 
+def HighScore():
+    pygame.init()
+    pygame.display.set_caption('High Score')
+    screen = pygame.display.set_mode((700, 700))
+    screen.fill(black)
+    wide, high= pygame.display.get_surface().get_size()
+
+    # Write to File
+    highScorePathWrite = open('High Scores.txt', "a")
+    highScorePathWrite.close()
+
+    # Read File
+    highScorePathRead = open('High Scores.txt', 'r')
+    lines = highScorePathRead.readlines()
+    if (len(lines) == 0):
+        lines = ["No Data Yet"]
+    index = 0
+
+    #Screen Title
+    font = pygame.font.SysFont('Times New Roman', 40)
+    playerInfo = font.render("High Score", False, white)
+    textWidth, textHeight = font.size("High Score")
+    screen.blit(playerInfo, (wide / 2 - textWidth / 2, high / 20 + 20 * 2 * index))
+
+    # Back Button
+    backButton = button(gray, wide / 4 ,  7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
+    backButton.draw(screen, white)
+    pygame.display.update()
+
+    for line in lines:
+        line = line.strip()
+        font = pygame.font.SysFont('Times New Roman', 25)
+        textWidth, textHeight = font.size("High Score")
+        playerInfo = font.render(line, False, white)
+        screen.blit(playerInfo, (wide / 2 - textWidth / 2, high / 6 + 20 * 2 * index))
+        index = index + 1
+
+    while True:
+        pygame.display.update()
+        pos = pygame.mouse.get_pos()
+        backButton.draw(screen)
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (backButton.isOver(pos)):
+                    mainMenu()
+                    
+            if event.type == pygame.MOUSEMOTION:
+                if (backButton.isOver(pos)):
+                    backButton.color = lessGray
+                else:
+                    backButton.color = gray
+
 # Main Menu
 def mainMenu():
     pygame.init()
     pygame.display.set_caption('Start')
     screen = pygame.display.set_mode((700, 700))
     screen.fill(black)
-    wide, high= pygame.display.get_surface().get_size()
+    wide, high = pygame.display.get_surface().get_size()
 
     # Draw the title
     title = "TIC-TAC-TOE"
@@ -274,7 +334,7 @@ def mainMenu():
                 if (creditButton.isOver(pos)):
                     credit()
                 if (highScoreButton.isOver(pos)):
-                    pass
+                    HighScore()
                     
             if event.type == pygame.MOUSEMOTION:
                 if (startButton.isOver(pos)):
