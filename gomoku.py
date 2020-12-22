@@ -42,7 +42,7 @@ def startBoard():
     key = Board(iniStatus, 0, COL, ROW, ai, createPatternDict())
 
 def reDraw(surface):
-    surface.fill((0, 0, 0))
+    surface.fill(black)
     key.draw(surface)
     pygame.display.update()
 
@@ -104,24 +104,25 @@ def createPatternDict():
     return patternDict
 
 #Main Screen
-def main(size = 8):
+def main(size = 5):
     # prepare
     global width, height, score, ROW, COL
-    ROW = size
-    COL = size
+    ROW, COL = size, size
     score = 0
     pygame.init()
-    height, width = 650, 650
-    screen = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((700, 700),0,32)
     pygame.display.set_caption('Game')
     screen.fill(black)
+    wide, high = pygame.display.get_surface().get_size()
+
     # instantiate the game
     startBoard()
+    
     # main loop
-    flag = True
-    while flag:
-        button = pygame.Rect(50, 100, 100, 50)
-        pygame.draw.rect(screen, (255, 0, 0), button)
+    while True:
+        pos = pygame.mouse.get_pos()
+        button1 = pygame.Rect(50, 100, 100, 50)
+        pygame.draw.rect(screen, (255, 0, 0), button1)
         key.listen()
         reDraw(screen)
         if ultility.checkWin(key.value):
@@ -181,6 +182,7 @@ def subStart():
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
 
+    # List of size
     sizeList = [5,6,7,8,9,10]
     size = 5 # default value
 
