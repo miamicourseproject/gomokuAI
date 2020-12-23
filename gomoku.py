@@ -106,8 +106,8 @@ def createPatternDict():
 def main():
     # prepare
     global width, height, score, ROW, COL
-    ROW = 8
-    COL = 8
+    ROW = 11
+    COL = 11
     score = 0
     pygame.init()
     height, width = 650, 650
@@ -270,4 +270,4 @@ def mainMenu():
                     creditButton.color = gray
         pygame.display.update()
 
-mainMenu()
+main()
