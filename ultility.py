@@ -46,7 +46,13 @@ class ultility:
 
     @staticmethod
     def checkWin(value):
-        return value > 900000 or value < -900000  #test???
+        if (value > 900000):
+            print("A wins")
+            return True
+        elif (value < -900000):
+            print("B wins")
+            return True
+        else: return False
 
     @staticmethod
     def checkTie(board):

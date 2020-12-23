@@ -6,9 +6,10 @@ yMargin = None
 size = None
 
 class Board(object):
-    def __init__(self, status, value, ROW, COL, aiplayer, patternDict):
+    def __init__(self, turnA, status, value, ROW, COL, aiplayer, patternDict):
         # turnA means AI's turn while !turnA is human's turn
-        self.turnA = True # always let AI go first
+        self.turnA = turnA
+        self.initTurn = turnA
         self.status = status
         self.value = value
         self.ROW = ROW
@@ -25,13 +26,13 @@ class Board(object):
             # AI's turn
             if self.turnA:
                 # call miniMax function so that AI can make its next move
-                self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, True)
+                self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, self.initTurn)
                 ai_nextMove_x = self.aiplayer.nextMove[0]
                 ai_nextMove_y = self.aiplayer.nextMove[1]
                 # update board's total value
                 self.value = self.aiplayer.next_value
                 # make AI's decided next move and change turnA to False
-                self.status[ai_nextMove_x][ai_nextMove_y] = 1
+                self.status[ai_nextMove_x][ai_nextMove_y] = 1 if self.initTurn else -1
                 self.empty_cell = self.empty_cell - 1
                 self.turnA = not self.turnA
 
@@ -47,8 +48,9 @@ class Board(object):
                         break
                     else:
                         # update board's value, make the move and change turnA to True
-                        self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,-1)
-                        self.status[col1][row1] = -1
+                        initTurnVal = -1 if self.initTurn else 1
+                        self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,initTurnVal)
+                        self.status[col1][row1] = initTurnVal
                         self.empty_cell = self.empty_cell - 1
                         self.turnA = not self.turnA
 

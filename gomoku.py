@@ -39,7 +39,7 @@ def startBoard():
     ai = AIPlayer(2, COL, ROW, createPatternDict())
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(iniStatus, 0, COL, ROW, ai, createPatternDict())
+    key = Board(True, iniStatus, 0, COL, ROW, ai, createPatternDict())
 
 def reDraw(surface):
     surface.fill(black)
@@ -104,7 +104,7 @@ def createPatternDict():
     return patternDict
 
 #Main Screen
-def main(size = 5):
+def main(size = 9):
     # prepare
     global width, height, score, ROW, COL
     ROW, COL = size, size
@@ -126,7 +126,7 @@ def main(size = 5):
         key.listen()
         reDraw(screen)
         if ultility.checkWin(key.value) or ultility.checkTie(key):
-            pygame.time.delay(50)
+            pygame.time.delay(500)
             startBoard()
  
 #Credits Screen
