@@ -1,8 +1,11 @@
 1) Front-end Screen:
-+ Start Button
-+ High Score (maybe)
++ High Score
++ Alert
++ Complete Structure
 
-2) In-game Button:
-+ Restart (Reset game immediately)
+2) Algo:
++ Players' turn
++ Tie Result
++ Game Logic
 
 * Future: Hint for human

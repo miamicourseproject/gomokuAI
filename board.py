@@ -1,8 +1,8 @@
 import pygame
 import math
 
-x_margin = None
-y_margin = None
+xMargin = None
+yMargin = None
 size = None
 
 class Board(object):
@@ -15,6 +15,7 @@ class Board(object):
         self.COL = COL
         self.aiplayer = aiplayer
         self.patternDict = patternDict
+        self.empty_cell = ROW * COL
 
     def listen(self):  # listen to the user
         for event in pygame.event.get():
@@ -31,14 +32,15 @@ class Board(object):
                 self.value = self.aiplayer.next_value
                 # make AI's decided next move and change turnA to False
                 self.status[ai_nextMove_x][ai_nextMove_y] = 1
+                self.empty_cell = self.empty_cell - 1
                 self.turnA = not self.turnA
 
             # human's turn
             else:
                 if pygame.mouse.get_pressed()[0]:
                     # get position of clicked mouse and convert it to according row and column
-                    col1 = (pygame.mouse.get_pos()[0] - x_margin) // size
-                    row1 = (pygame.mouse.get_pos()[1] - y_margin) // size
+                    col1 = (pygame.mouse.get_pos()[0] - xMargin) // size
+                    row1 = (pygame.mouse.get_pos()[1] - yMargin) // size
                     # check if that position is already marked
                     if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
                         print("dont choose again!")
@@ -47,22 +49,23 @@ class Board(object):
                         # update board's value, make the move and change turnA to True
                         self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,-1)
                         self.status[col1][row1] = -1
+                        self.empty_cell = self.empty_cell - 1
                         self.turnA = not self.turnA
 
     def draw(self, surface):
-        global size, x_margin, y_margin
+        global size, xMargin, yMargin
         # set size of each square and board's margin
         size = 40
-        x_margin = 10
-        y_margin = 10
+        xMargin = 10
+        yMargin = 10
         # draw the board
-        y = y_margin
+        y = yMargin
         for i in range(self.ROW + 1):
-            pygame.draw.line(surface, (255, 255, 255), (x_margin, y), (x_margin + self.ROW * size, y))
+            pygame.draw.line(surface, (255, 255, 255), (xMargin, y), (xMargin + self.ROW * size, y))
             y = y + size
-        x = x_margin
+        x = xMargin
         for j in range(self.COL + 1):
-            pygame.draw.line(surface, (255, 255, 255), (x, y_margin), (x, y_margin + self.COL * size))
+            pygame.draw.line(surface, (255, 255, 255), (x, yMargin), (x, yMargin + self.COL * size))
             x = x + size
         #  draw characters in the square
         font = pygame.font.SysFont('arial', 40)

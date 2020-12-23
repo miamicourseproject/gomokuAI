@@ -8,8 +8,9 @@ from button import button
 from board import Board
 from ultility import ultility
 from AIPlayer import AIPlayer
-from InputBox import InputBox
 from Dropdown import DropDown
+from pathlib import Path
+from InputBox import InputBox
 
 # Define variables at global scope first before using them
 x_margin = None
@@ -25,7 +26,7 @@ COL = None
 
 # Color code
 white = (255,255,255)
-black = (0,0,0)
+black = (30,30,30)
 gray = (128,128,128)
 lessGray = (192,192,192)
 COLOR_INACTIVE = (100, 80, 255)
@@ -41,7 +42,7 @@ def startBoard():
     key = Board(iniStatus, 0, COL, ROW, ai, createPatternDict())
 
 def reDraw(surface):
-    surface.fill((0, 0, 0))
+    surface.fill(black)
     key.draw(surface)
     pygame.display.update()
 
@@ -103,27 +104,28 @@ def createPatternDict():
     return patternDict
 
 #Main Screen
-def main():
+def main(size = 5):
     # prepare
     global width, height, score, ROW, COL
-    ROW = 11
-    COL = 11
+    ROW, COL = size, size
     score = 0
     pygame.init()
-    height, width = 650, 650
-    screen = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((700, 700),0,32)
     pygame.display.set_caption('Game')
-    screen.fill((0, 0, 0))
+    screen.fill(black)
+    wide, high = pygame.display.get_surface().get_size()
+
     # instantiate the game
     startBoard()
+    
     # main loop
-    flag = True
-    while flag:
-        button = pygame.Rect(50, 100, 100, 50)
-        pygame.draw.rect(screen, (255, 0, 0), button)
+    while True:
+        pos = pygame.mouse.get_pos()
+        button1 = pygame.Rect(50, 100, 100, 50)
+        pygame.draw.rect(screen, (255, 0, 0), button1)
         key.listen()
         reDraw(screen)
-        if ultility.checkWin(key.value):
+        if ultility.checkWin(key.value) or ultility.checkTie(key):
             pygame.time.delay(50)
             startBoard()
  
@@ -136,10 +138,10 @@ def credit():
     wide, high = pygame.display.get_surface().get_size()
 
     creditForTeam = "This Project is made by Duc Nam, Hieu Phan and Thomas Nguyen"
-    creditForBackEnd = "Algorithms: Duc Nam and Hieu Phan"
+    creditForBackEnd = "Algorithms + Game Logic: Duc Nam and Hieu Phan"
     creditForFrontEnd = "UI/ Design: Thomas Nguyen"
 
-    backButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Back to Main Menu")
+    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)
     pygame.display.update()
 
@@ -172,6 +174,7 @@ def credit():
                 else:
                     backButton.color = gray
 
+# Substart Menu
 def subStart():
     pygame.init()
     pygame.display.set_caption('credit')
@@ -179,23 +182,41 @@ def subStart():
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
 
-    titleText= "Choose the size of your board"
+    # List of size
+    sizeList = [5,6,7,8,9,10]
+    size = 5 # default value
 
-    startButton =  button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start Game")
+    # create buttons
+    titleText= "Choose the size of your board"
+    startButton =  button(gray, wide / 4 , high / 7, wide / 2, high / 8, "Start Game")
     startButton.draw(screen, white)
-    backButton = button(gray, wide / 4 , high / 2, wide / 2, high / 8, "Back to Main Menu")
+    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)  
 
+    # create title
     font = pygame.font.SysFont('Times New Roman', 40)
     title = font.render(titleText, False, white)
     screen.blit(title, (wide / 6, high / 20))
+    
+    # create dropdown
+    sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , high / 3 + 20, wide / 2, high / 15, 
+    pygame.font.SysFont("Times New Roman", 30), "Select Mode", ["5x5", "6x6", "7x7", "8x8", "9x9", "10x10"])
+
+    # create input field
+    nameInput = InputBox(wide / 4, 15 * high / 56 + 20, wide / 2, high / 20, "Fill in your name")
 
     while True:
         pos = pygame.mouse.get_pos()
         backButton.draw(screen)
         startButton.draw(screen)
+        nameInput.draw(screen)
         pygame.display.update()
-        for event in pygame.event.get():
+        event_list = pygame.event.get()
+
+        for event in event_list:
+            nameInput.handle_event(event)
+            nameInput.update()
+
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
@@ -204,7 +225,7 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
-                    main()
+                    main(size)
 
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):
@@ -217,6 +238,77 @@ def subStart():
                 else:
                     startButton.color = gray
 
+        selectedOption = sizeDropDown.update(event_list,pos)
+
+        if selectedOption >= 0:
+            sizeDropDown.main = sizeDropDown.options[selectedOption]
+            size = sizeList[selectedOption]
+
+        screen.fill(black)
+        nameInput.draw(screen)
+        sizeDropDown.draw(screen)
+        screen.blit(title, (wide / 6, high / 20))
+
+    pygame.display.update()
+
+#High Score Menu
+def highScore():
+    pygame.init()
+    pygame.display.set_caption('High Score')
+    screen = pygame.display.set_mode((700, 700))
+    screen.fill(black)
+    wide, high= pygame.display.get_surface().get_size()
+
+    # Write to File
+    highScorePathWrite = open('High Scores.txt', "a")
+    highScorePathWrite.close()
+
+    # Read File
+    highScorePathRead = open('High Scores.txt', 'r')
+    lines = highScorePathRead.readlines()
+    if (len(lines) == 0):
+        lines = ["No Data Yet"]
+    index = 0
+
+    #Screen Title
+    font = pygame.font.SysFont('Times New Roman', 40)
+    playerInfo = font.render("High Score", False, white)
+    textWidth, textHeight = font.size("High Score")
+    screen.blit(playerInfo, (wide / 2 - textWidth / 2, high / 20 + 20 * 2 * index))
+
+    # Back Button
+    backButton = button(gray, wide / 4 ,  7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
+    backButton.draw(screen, white)
+    pygame.display.update()
+
+    for line in lines:
+        line = line.strip()
+        font = pygame.font.SysFont('Times New Roman', 25)
+        textWidth, textHeight = font.size("High Score")
+        playerInfo = font.render(line, False, white)
+        screen.blit(playerInfo, (wide / 2 - textWidth / 2, high / 6 + 20 * 2 * index))
+        index = index + 1
+
+    while True:
+        pygame.display.update()
+        pos = pygame.mouse.get_pos()
+        backButton.draw(screen)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (backButton.isOver(pos)):
+                    mainMenu()
+                    
+            if event.type == pygame.MOUSEMOTION:
+                if (backButton.isOver(pos)):
+                    backButton.color = lessGray
+                else:
+                    backButton.color = gray
 
 # Main Menu
 def mainMenu():
@@ -224,7 +316,7 @@ def mainMenu():
     pygame.display.set_caption('Start')
     screen = pygame.display.set_mode((700, 700))
     screen.fill(black)
-    wide, high= pygame.display.get_surface().get_size()
+    wide, high = pygame.display.get_surface().get_size()
 
     # Draw the title
     title = "TIC-TAC-TOE"
@@ -235,18 +327,21 @@ def mainMenu():
     # Initate Buttons
     startButton = button(gray, wide / 4 , high / 4, wide / 2, high / 8, "Start")
     startButton.draw(screen, white)
-    creditButton = button(gray, wide / 4 , high / 2.5, wide / 2, high / 8, "Credit")
+    creditButton = button(gray, wide / 4 , 3 * high / 8 + 20, wide / 2, high / 8, "Credit")
     creditButton.draw(screen, white)
+    highScoreButton = button(gray, wide / 4 , high / 2 + 40, wide / 2, high / 8, "High Score")
+    highScoreButton.draw(screen, white)
+
     while True:
         event_list = pygame.event.get()
-
         # Get position of the mouse
         pos = pygame.mouse.get_pos()
 
         # Draw Buttons
         startButton.draw(screen)
         creditButton.draw(screen)
-
+        highScoreButton.draw(screen)
+        
         for event in event_list:
             if event.type == QUIT:
                 pygame.quit()
@@ -257,17 +352,22 @@ def mainMenu():
                     subStart() 
                 if (creditButton.isOver(pos)):
                     credit()
+                if (highScoreButton.isOver(pos)):
+                    highScore()
                     
             if event.type == pygame.MOUSEMOTION:
                 if (startButton.isOver(pos)):
                     startButton.color = lessGray
                 else:
                     startButton.color = gray
-
                 if (creditButton.isOver(pos)):
                     creditButton.color = lessGray
                 else:
                     creditButton.color = gray
+                if (highScoreButton.isOver(pos)):
+                    highScoreButton.color = lessGray
+                else:
+                    highScoreButton.color = gray
         pygame.display.update()
 
 main()

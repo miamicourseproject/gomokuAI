@@ -47,3 +47,7 @@ class ultility:
     @staticmethod
     def checkWin(value):
         return value > 900000 or value < -900000  #test???
+
+    @staticmethod
+    def checkTie(board):
+        return board.empty_cell == 0
