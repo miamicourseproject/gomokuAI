@@ -1,5 +1,6 @@
 import pygame
 import math
+from ultility import ultility
 
 xMargin = None
 yMargin = None
@@ -42,17 +43,18 @@ class Board(object):
                     # get position of clicked mouse and convert it to according row and column
                     col1 = (pygame.mouse.get_pos()[0] - xMargin) // size
                     row1 = (pygame.mouse.get_pos()[1] - yMargin) // size
-                    # check if that position is already marked
-                    if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
-                        print("dont choose again!")
-                        break
-                    else:
-                        # update board's value, make the move and change turnA to True
-                        initTurnVal = -1 if self.initTurn else 1
-                        self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,initTurnVal)
-                        self.status[col1][row1] = initTurnVal
-                        self.empty_cell = self.empty_cell - 1
-                        self.turnA = not self.turnA
+                    if ultility.checkInBound(col1, row1, self.COL, self.ROW):
+                        # check if that position is already marked
+                        if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
+                            print("dont choose again!")
+                            break
+                        else:
+                            # update board's value, make the move and change turnA to True
+                            initTurnVal = -1 if self.initTurn else 1
+                            self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,initTurnVal)
+                            self.status[col1][row1] = initTurnVal
+                            self.empty_cell = self.empty_cell - 1
+                            self.turnA = not self.turnA
 
     def draw(self, surface):
         global size, xMargin, yMargin
