@@ -43,6 +43,9 @@ class Board(object):
                     col1 = (pygame.mouse.get_pos()[0] - xMargin) // size
                     row1 = (pygame.mouse.get_pos()[1] - yMargin) // size
                     # check if that position is already marked
+                    if (col1 > len(self.status) or row1 > len(self.status)):
+                        print("Choose inside the board")
+                        break
                     if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
                         print("dont choose again!")
                         break
