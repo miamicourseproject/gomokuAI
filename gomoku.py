@@ -4,6 +4,7 @@ import random
 import pygame
 import sys
 from pygame.locals import *
+from datetime import datetime
 from button import button
 from board import Board
 from ultility import ultility
@@ -29,10 +30,6 @@ white = (255,255,255)
 black = (30,30,30)
 gray = (128,128,128)
 lessGray = (192,192,192)
-COLOR_INACTIVE = (100, 80, 255)
-COLOR_ACTIVE = (100, 200, 255)
-COLOR_LIST_INACTIVE = (255, 100, 100)
-COLOR_LIST_ACTIVE = (255, 150, 150)
 
 # initialize board
 def startBoard():
@@ -225,6 +222,7 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
+                    print(datetime.now())
                     main(size)
 
             if event.type == pygame.MOUSEMOTION:
