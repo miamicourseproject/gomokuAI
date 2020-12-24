@@ -9,6 +9,7 @@ class button():
         self.width = width
         self.height = height
         self.text = text
+        self.clicked = False
 
     def draw(self,win,outline=None):
         #Call this method to draw the button on the screen

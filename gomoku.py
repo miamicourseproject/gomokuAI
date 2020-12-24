@@ -31,13 +31,6 @@ black = (30,30,30)
 gray = (128,128,128)
 lessGray = (192,192,192)
 
-# initialize board
-def startBoard():
-    ai = AIPlayer(2, COL, ROW, createPatternDict())
-    global iniStatus, key
-    iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
-    key = Board(True, iniStatus, 0, COL, ROW, ai, createPatternDict())
-
 def reDraw(surface):
     surface.fill(black)
     key.draw(surface)
@@ -101,19 +94,23 @@ def createPatternDict():
     return patternDict
 
 #Main Screen
-def main(size = 9):
+def main(size = 9, AITurn = True):
     # prepare
     global width, height, score, ROW, COL
     ROW, COL = size, size
     score = 0
+    # initiate the screen
     pygame.init()
     screen = pygame.display.set_mode((700, 700),0,32)
     pygame.display.set_caption('Game')
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
 
-    # instantiate the game
-    startBoard()
+    # initiate the game
+    ai = AIPlayer(2, COL, ROW, createPatternDict())
+    global iniStatus, key
+    iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
+    key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
     
     # main loop
     while True:
@@ -124,7 +121,9 @@ def main(size = 9):
         reDraw(screen)
         if ultility.checkWin(key.value) or ultility.checkTie(key):
             pygame.time.delay(500)
-            startBoard()
+            ai = AIPlayer(2, COL, ROW, createPatternDict())
+            iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
+            key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
  
 #Credits Screen
 def credit():
@@ -185,10 +184,14 @@ def subStart():
 
     # create buttons
     titleText= "Choose the size of your board"
-    startButton =  button(gray, wide / 4 , high / 7, wide / 2, high / 8, "Start Game")
+    startButton = button(gray, wide / 4 , high / 7, wide / 2, high / 12, "Start Game")
     startButton.draw(screen, white)
     backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back to Main Menu")
     backButton.draw(screen, white)  
+    AITurnButton = button(gray, wide / 4 , high / 3 - 10, wide / 4, high / 18, "AI Start")
+    AITurnButton.draw(screen, white)
+    HumanTurnButton = button(gray, wide / 2 , high / 3 - 10, wide / 4, high / 18, "Human Start") 
+    HumanTurnButton.draw(screen, white)
 
     # create title
     font = pygame.font.SysFont('Times New Roman', 40)
@@ -196,17 +199,23 @@ def subStart():
     screen.blit(title, (wide / 6, high / 20))
     
     # create dropdown
-    sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , high / 3 + 20, wide / 2, high / 15, 
+    sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , high / 2.6, wide / 2, high / 15, 
     pygame.font.SysFont("Times New Roman", 30), "Select Mode", ["5x5", "6x6", "7x7", "8x8", "9x9", "10x10"])
 
     # create input field
-    nameInput = InputBox(wide / 4, 15 * high / 56 + 20, wide / 2, high / 20, "Fill in your name")
+    nameInput = InputBox(wide / 4, high / 4, wide / 2, high / 20, "Fill in your name")
 
     while True:
         pos = pygame.mouse.get_pos()
-        backButton.draw(screen)
-        startButton.draw(screen)
+
+        #draw button + title
         nameInput.draw(screen)
+        backButton.draw(screen, white)
+        startButton.draw(screen, white)
+        AITurnButton.draw(screen, white)
+        HumanTurnButton.draw(screen, white)
+
+        #Update display
         pygame.display.update()
         event_list = pygame.event.get()
 
@@ -219,11 +228,22 @@ def subStart():
                 sys.exit()
             
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if (AITurnButton.isOver(pos)):
+                    AITurn = True
+                    AITurnButton.clicked = True
+                    HumanTurnButton.clicked = False
+                    AITurnButton.color = white
+                    HumanTurnButton.color = gray
+                if (HumanTurnButton.isOver(pos)):
+                    AITurn = False
+                    AITurnButton.clicked = False
+                    HumanTurnButton.clicked = True
+                    HumanTurnButton.color = white
+                    AITurnButton.color = gray
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
-                    print(datetime.now())
-                    main(size)
+                    main(size, AITurn)
 
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):
@@ -236,15 +256,26 @@ def subStart():
                 else:
                     startButton.color = gray
 
+                if (HumanTurnButton.clicked == False):   
+                    if (HumanTurnButton.isOver(pos)):
+                        HumanTurnButton.color = lessGray
+                    else:
+                        HumanTurnButton.color = gray
+                
+                if (AITurnButton.clicked == False):
+                    if (AITurnButton.isOver(pos)):
+                        AITurnButton.color = lessGray
+                    else:
+                        AITurnButton.color = gray
+
         selectedOption = sizeDropDown.update(event_list,pos)
 
         if selectedOption >= 0:
             sizeDropDown.main = sizeDropDown.options[selectedOption]
             size = sizeList[selectedOption]
-
         screen.fill(black)
         nameInput.draw(screen)
-        sizeDropDown.draw(screen)
+        sizeDropDown.draw(screen, white)
         screen.blit(title, (wide / 6, high / 20))
 
     pygame.display.update()
@@ -368,4 +399,4 @@ def mainMenu():
                     highScoreButton.color = gray
         pygame.display.update()
 
-main()
+mainMenu()

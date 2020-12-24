@@ -24,8 +24,15 @@ class DropDown():
         self.drawMenu = False
         self.menuActive = False
         self.activeOption = -1
+        self.x = x
+        self.y = y
+        self.width = w
+        self.height = h
 
-    def draw(self, surf):
+    def draw(self, surf, outline = None):
+        if outline:
+            pygame.draw.rect(surf, outline, (self.x-2,self.y-2,self.width+4,self.height+4),0)
+            
         pygame.draw.rect(surf, self.colorMenu[self.menuActive], self.rect, 0)
         msg = self.font.render(self.main, 1, (0, 0, 0))
         surf.blit(msg, msg.get_rect(center = self.rect.center))
