@@ -32,7 +32,7 @@ class AIPlayer(object):
                 if eval > maxEval:
                     # reset max value to eval and set next move and next value according to current checked position
                     maxEval = eval
-                    if depth == self.depth:
+                    if depth == self.depth and maximizingPlayer:
                         self.nextMove = [k, l]
                         self.next_value = new_val
                 alpha = max(alpha, eval)
@@ -51,6 +51,9 @@ class AIPlayer(object):
                 eval = self.miniMax(status, new_val, depth - 1, alpha, beta, True)
                 if eval < minEval:
                     minEval = eval
+                    if depth == self.depth and not maximizingPlayer:
+                        self.nextMove = [k, l]
+                        self.next_value = new_val
                 beta = min(beta, eval)
                 status[k][l] = 0
                 if beta <= alpha:
