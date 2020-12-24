@@ -3,6 +3,7 @@ import math
 import random
 import pygame
 import sys
+import ctypes
 from pygame.locals import *
 from datetime import datetime
 from button import button
@@ -94,7 +95,7 @@ def createPatternDict():
     return patternDict
 
 #Main Screen
-def main(size = 9, AITurn = True):
+def main(AITurn, size = 9):
     # prepare
     global width, height, score, ROW, COL
     ROW, COL = size, size
@@ -120,6 +121,20 @@ def main(size = 9, AITurn = True):
         key.listen()
         reDraw(screen)
         if ultility.checkWin(key.value) or ultility.checkTie(key):
+            if ultility.checkTie(key):
+                text = "Tie"
+            else:
+                if AITurn:
+                    if key.value > 900000:
+                        text = "You lose"
+                    if key.value < -900000:
+                        text = "You win"
+                else:
+                    if key.value > 900000:
+                        text = "You win"
+                    if key.value < -900000:
+                        text = "You lose"
+            ultility.Mbox('Results', text, 1)
             pygame.time.delay(500)
             ai = AIPlayer(2, COL, ROW, createPatternDict())
             iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
@@ -177,6 +192,7 @@ def subStart():
     screen = pygame.display.set_mode((700, 700),0,32)
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
+    AITurn = True
 
     # List of size
     sizeList = [5,6,7,8,9,10]
@@ -243,7 +259,7 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
-                    main(size, AITurn)
+                    main(AITurn, size)
 
             if event.type == pygame.MOUSEMOTION:
                 if (backButton.isOver(pos)):

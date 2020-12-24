@@ -1,6 +1,7 @@
 import pygame
 import math
 from ultility import ultility
+import ctypes
 
 xMargin = None
 yMargin = None
@@ -46,7 +47,7 @@ class Board(object):
                     if ultility.checkInBound(col1, row1, self.COL, self.ROW):
                         # check if that position is already marked
                         if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
-                            print("dont choose again!")
+                            ultility.Mbox('Error', "Invalid Move", 1)
                             break
                         else:
                             # update board's value, make the move and change turnA to True

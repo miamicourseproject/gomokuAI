@@ -1,5 +1,9 @@
+import ctypes
 # this class includes help methods that can be used globally
 class ultility:
+    @staticmethod
+    def Mbox(title, text, style):
+        return ctypes.windll.user32.MessageBoxW(0, text, title, style)
     @staticmethod
     def checkInBound(col1, row1, COL, ROW):
         return 0 <= col1 < COL and 0 <= row1 < ROW
@@ -47,10 +51,8 @@ class ultility:
     @staticmethod
     def checkWin(value):
         if (value > 900000):
-            print("A wins")
             return True
         elif (value < -900000):
-            print("B wins")
             return True
         else: return False
 
