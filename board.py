@@ -58,8 +58,8 @@ class Board(object):
         global size, xMargin, yMargin
         # set size of each square and board's margin
         size = 40
-        xMargin = 10
-        yMargin = 10
+        xMargin = (700 - size*self.ROW)//2
+        yMargin = (700 - size*self.ROW)//2
         # draw the board
         y = yMargin
         for i in range(self.ROW + 1):
@@ -80,4 +80,4 @@ class Board(object):
                 # draw nothing if square is empty
                 else:
                     text = font.render('', True, (0, 0, 0))
-                surface.blit(text, (k * 40 + 20, l * 40))
+                surface.blit(text, (k * size + xMargin + 10, l * size + yMargin - 10))
