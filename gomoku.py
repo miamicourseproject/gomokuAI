@@ -90,7 +90,7 @@ def createPatternDict():
     return patternDict
 
 # Main Screen
-def main(AITurn, size = 5):
+def main(AITurn, size = 15):
     # Prepare
     global width, height, score, ROW, COL
     ROW, COL = size, size
@@ -98,7 +98,7 @@ def main(AITurn, size = 5):
 
     # Initiate the screen
     pygame.init()
-    screen = pygame.display.set_mode((700, 700),0,32)
+    screen = pygame.display.set_mode((800, 800),0,32)
     pygame.display.set_caption('Game')
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
@@ -116,7 +116,6 @@ def main(AITurn, size = 5):
     # Main loop
     while True:
         pos = pygame.mouse.get_pos()
-
         # Redraw the screen
         if key.turnA:
             key.listen(pos)
@@ -226,7 +225,7 @@ def subStart():
     AITurn = True
 
     # List of size
-    sizeList = [5,6,7,8,9,10]
+    sizeList = [5,6,7,8,10,15]
     size = 5 # default value
 
     # Create buttons
@@ -247,7 +246,7 @@ def subStart():
     
     # Create dropdown
     sizeDropDown = DropDown([gray, lessGray], [gray, lessGray], wide / 4 , high / 2.6, wide / 2, high / 15, 
-    pygame.font.SysFont("Times New Roman", 30), "Select Mode", ["5x5", "6x6", "7x7", "8x8", "9x9", "10x10"])
+    pygame.font.SysFont("Times New Roman", 30), "Select Mode", ["5x5", "6x6", "7x7", "8x8", "10x10", "15x15"])
 
     # Create input field
     nameInput = InputBox(wide / 4, high / 4, wide / 2, high / 20, "Fill in your name")
@@ -451,5 +450,8 @@ def mainMenu():
                 else:
                     highScoreButton.color = gray
         pygame.display.update()
+
+
+# main()
 
 mainMenu()
