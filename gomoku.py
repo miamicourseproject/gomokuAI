@@ -32,7 +32,7 @@ black = (30,30,30)
 gray = (128,128,128)
 lessGray = (192,192,192)
 
-# this method contains different patterns with their values
+# This method contains different patterns with their values
 # These adapt from this report. Link: https://linyanghe.github.io/projects/resources/Gomuku.pdf
 def createPatternDict():
     x = -1
@@ -89,35 +89,35 @@ def createPatternDict():
         x += 2
     return patternDict
 
-#Main Screen
+# Main Screen
 def main(AITurn, size = 9):
-    # prepare
-    global width, height, score, ROW, COL
+    # Prepare
+    global width, height, score, ROW, COL, iniStatus, key
     ROW, COL = size, size
     score = 0
-    # initiate the screen
+
+    # Initiate the screen
     pygame.init()
     screen = pygame.display.set_mode((700, 700),0,32)
     pygame.display.set_caption('Game')
     screen.fill(black)
     wide, high = pygame.display.get_surface().get_size()
 
-    # initiate the game
+    # Initiate the game
     ai = AIPlayer(2, COL, ROW, createPatternDict())
-    global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
     key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
     
-    # draw buttons
+    # Draw buttons
     backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back")
     backButton.draw(screen, white) 
 
-    # main loop
+    # Main loop
     while True:
         pos = pygame.mouse.get_pos()
         key.listen()
 
-        # redraw the screen
+        # Redraw the screen
         screen.fill(black)
         key.draw(screen)
         backButton.draw(screen, white)
@@ -136,8 +136,6 @@ def main(AITurn, size = 9):
                     backButton.color = lessGray
                 else:
                     backButton.color = gray
-
-        pygame.display.update()
 
         if ultility.checkWin(key.value) or ultility.checkTie(key):
             if ultility.checkTie(key):
@@ -159,7 +157,8 @@ def main(AITurn, size = 9):
             iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
             key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
             
-            pygame.display.update()
+    pygame.display.update()
+
 #Credits Screen
 def credit():
     pygame.init()
