@@ -289,6 +289,7 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
+                    print(nameInput.text)
                     main(AITurn, size)
 
             if event.type == pygame.MOUSEMOTION:
@@ -362,7 +363,7 @@ def highScore():
     for line in lines:
         line = line.strip()
         font = pygame.font.SysFont('Times New Roman', 25)
-        textWidth, textHeight = font.size("High Score")
+        textWidth, textHeight = font.size(line)
         playerInfo = font.render(line, False, white)
         screen.blit(playerInfo, (wide / 2 - textWidth / 2, high / 6 + 20 * 2 * index))
         index = index + 1
@@ -450,8 +451,5 @@ def mainMenu():
                 else:
                     highScoreButton.color = gray
         pygame.display.update()
-
-
-# main()
 
 mainMenu()
