@@ -32,11 +32,6 @@ black = (30,30,30)
 gray = (128,128,128)
 lessGray = (192,192,192)
 
-def reDraw(surface):
-    surface.fill(black)
-    key.draw(surface)
-    pygame.display.update()
-
 # this method contains different patterns with their values
 # These adapt from this report. Link: https://linyanghe.github.io/projects/resources/Gomuku.pdf
 def createPatternDict():
@@ -113,13 +108,37 @@ def main(AITurn, size = 9):
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
     key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
     
+    # draw buttons
+    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back")
+    backButton.draw(screen, white) 
+
     # main loop
     while True:
         pos = pygame.mouse.get_pos()
-        button1 = pygame.Rect(50, 100, 100, 50)
-        pygame.draw.rect(screen, (255, 0, 0), button1)
         key.listen()
-        reDraw(screen)
+
+        # redraw the screen
+        screen.fill(black)
+        key.draw(screen)
+        backButton.draw(screen, white)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if (backButton.isOver(pos)):
+                    subStart()
+
+            if event.type == pygame.MOUSEMOTION:
+                if (backButton.isOver(pos)):
+                    backButton.color = lessGray
+                else:
+                    backButton.color = gray
+
+        pygame.display.update()
+
         if ultility.checkWin(key.value) or ultility.checkTie(key):
             if ultility.checkTie(key):
                 text = "Tie"
@@ -139,7 +158,8 @@ def main(AITurn, size = 9):
             ai = AIPlayer(2, COL, ROW, createPatternDict())
             iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
             key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
- 
+            
+            pygame.display.update()
 #Credits Screen
 def credit():
     pygame.init()
