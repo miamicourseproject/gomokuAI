@@ -20,42 +20,36 @@ class Board(object):
         self.patternDict = patternDict
         self.empty_cell = ROW * COL
 
-    def listen(self):  # listen to the user
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+    def listen(self, pos):  # listen to the user
+        # AI's turn
+        if self.turnA:
+            # call miniMax function so that AI can make its next move
+            self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, self.initTurn)
+            ai_nextMove_x = self.aiplayer.nextMove[0]
+            ai_nextMove_y = self.aiplayer.nextMove[1]
+            # update board's total value
+            self.value = self.aiplayer.next_value
+            # make AI's decided next move and change turnA to False
+            self.status[ai_nextMove_x][ai_nextMove_y] = 1 if self.initTurn else -1
+            self.empty_cell = self.empty_cell - 1
+            self.turnA = not self.turnA
 
-            # AI's turn
-            if self.turnA:
-                # call miniMax function so that AI can make its next move
-                self.aiplayer.miniMax(self.status, self.value, self.aiplayer.depth, -math.inf, math.inf, self.initTurn)
-                ai_nextMove_x = self.aiplayer.nextMove[0]
-                ai_nextMove_y = self.aiplayer.nextMove[1]
-                # update board's total value
-                self.value = self.aiplayer.next_value
-                # make AI's decided next move and change turnA to False
-                self.status[ai_nextMove_x][ai_nextMove_y] = 1 if self.initTurn else -1
-                self.empty_cell = self.empty_cell - 1
-                self.turnA = not self.turnA
-
-            # human's turn
-            else:
-                if pygame.mouse.get_pressed()[0]:
-                    # get position of clicked mouse and convert it to according row and column
-                    col1 = (pygame.mouse.get_pos()[0] - xMargin) // size
-                    row1 = (pygame.mouse.get_pos()[1] - yMargin) // size
-                    if ultility.checkInBound(col1, row1, self.COL, self.ROW):
-                        # check if that position is already marked
-                        if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
-                            ultility.Mbox('Error', "Invalid Move", 1)
-                            break
-                        else:
-                            # update board's value, make the move and change turnA to True
-                            initTurnVal = -1 if self.initTurn else 1
-                            self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,initTurnVal)
-                            self.status[col1][row1] = initTurnVal
-                            self.empty_cell = self.empty_cell - 1
-                            self.turnA = not self.turnA
+        # human's turn
+        else:
+                # get position of clicked mouse and convert it to according row and column
+            col1 = (pos[0] - xMargin) // size
+            row1 = (pos[1] - yMargin) // size
+            if ultility.checkInBound(col1, row1, self.COL, self.ROW):
+                # check if that position is already marked
+                if self.status[col1][row1] == 1 or self.status[col1][row1] == -1:
+                    ultility.Mbox('Error', "Invalid Move", 1)
+                else:
+                    # update board's value, make the move and change turnA to True
+                    initTurnVal = -1 if self.initTurn else 1
+                    self.value = self.aiplayer.evaluation(col1,row1,self.value,self.status,initTurnVal)
+                    self.status[col1][row1] = initTurnVal
+                    self.empty_cell = self.empty_cell - 1
+                    self.turnA = not self.turnA
 
     def draw(self, surface):
         global size, xMargin, yMargin
