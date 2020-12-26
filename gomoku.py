@@ -397,7 +397,6 @@ def highScore():
         open('High Scores.txt', 'w').close()
         highScoreChange = open('High Scores.txt', 'a')
         for i in range (len(highScoreList) - 1, len(highScoreList) - 11, -1):
-            print(highScoreList[i])
             highScoreChange.write(" - ".join(highScoreList[i]) + "\n")
         highScoreChange.close()
 
