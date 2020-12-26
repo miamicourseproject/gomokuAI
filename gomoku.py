@@ -4,6 +4,7 @@ import random
 import pygame
 import sys
 import ctypes
+import datetime
 from pygame.locals import *
 from datetime import datetime
 from button import button
@@ -25,6 +26,10 @@ height = None
 score = None
 ROW = None
 COL = None
+name = ""
+startTime = datetime.datetime.now()
+endTime = datetime.datetime.now()
+
 
 # Color code
 white = (255,255,255)
@@ -289,7 +294,10 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
-                    print(nameInput.text)
+                    name = nameInput.text
+                    startTime = datetime.datetime.now()
+                    print(name)
+                    print(startTime)
                     main(AITurn, size)
 
             if event.type == pygame.MOUSEMOTION:
