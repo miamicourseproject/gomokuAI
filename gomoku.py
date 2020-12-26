@@ -178,7 +178,6 @@ def main(AITurn, size = 15):
             highScorePathWrite.writelines(userName + " - " + str((endTime - startTime)) + " - " + result + "\n")
             highScorePathWrite.close()
 
-
             # Start a new game
             ultility.Mbox('Results', text, 1)
             pygame.time.delay(500)
@@ -366,11 +365,12 @@ def highScore():
     # Read File
     highScorePathRead = open('High Scores.txt', 'r')
     lines = highScorePathRead.readlines()
+    highScorePathRead.close()
     if (len(lines) == 0):
         lines = ["No Data Yet"]
     index = 0
 
-    #Screen Title
+    # Screen Title
     font = pygame.font.SysFont('Times New Roman', 40)
     playerInfo = font.render("High Score", False, white)
     textWidth, textHeight = font.size("High Score")
@@ -381,20 +381,32 @@ def highScore():
     backButton.draw(screen, white)
     pygame.display.update()
 
+    # This dictionary is used to determined the order of win, tie and lost 
+    resOrder = {"Victory": 0, "Tie": 1, "Lost": 2}
     # Sort High Score List
     highScoreList = []
     for line in lines:
         line = line.strip()
         lineList = line.split(" - ")
         highScoreList.append(lineList)
-    highScoreList = sorted(highScoreList, key=lambda x: (x[2], x[1], x[0]))
+    if (len(highScoreList) > 1):
+        highScoreList = sorted(highScoreList, key=lambda x: (resOrder[x[2]], x[1], x[0]))
 
-    # Write high scores from txt file
-    for elem in highScoreList[::-1]:
+    # Make sure the HighScore.txt files only have 10 best results
+    if (len(highScoreList) > 10):
+        open('High Scores.txt', 'w').close()
+        highScoreChange = open('High Scores.txt', 'a')
+        for i in range (len(highScoreList) - 1, len(highScoreList) - 11, -1):
+            print(highScoreList[i])
+            highScoreChange.write(" - ".join(highScoreList[i]) + "\n")
+        highScoreChange.close()
+
+    # Import high scores from txt file
+    for elem in highScoreList:
         line = " - ".join(elem)
         font = pygame.font.SysFont('Times New Roman', 25)
         textWidth, textHeight = font.size(line)
-        playerInfo = font.render(line, False, white)
+        playerInfo = font.render(str(index + 1) + ") " + line, False, white)
         screen.blit(playerInfo, (wide / 2 - textWidth / 2, high / 6 + 20 * 2 * index))
         index = index + 1
 
