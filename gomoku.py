@@ -26,9 +26,11 @@ height = None
 score = None
 ROW = None
 COL = None
-name = ""
-startTime = datetime.datetime.now()
-endTime = datetime.datetime.now()
+userName = ""
+result = ""
+startTime = datetime.now()
+endTime = datetime.now()
+
 
 
 # Color code
@@ -151,19 +153,33 @@ def main(AITurn, size = 15):
         
         # Check Win or Check Draw
         if ultility.checkWin(key.value) or ultility.checkTie(key):
+            # Game Result (Win/Tie)
             if ultility.checkTie(key):
                 text = "Tie"
+                result = "Tie"
             else:
                 if AITurn:
                     if key.value > 900000:
                         text = "You lose"
+                        result = "Lost"
                     if key.value < -900000:
                         text = "You win"
+                        result = "Victory"
                 else:
                     if key.value > 900000:
                         text = "You win"
+                        result = "Victory"
                     if key.value < -900000:
                         text = "You lose"
+                        result = "Lost"
+            # Write to File
+            highScorePathWrite = open('High Scores.txt', "a")
+            endTime = datetime.now()
+            highScorePathWrite.writelines(userName + " - " + str(endTime - startTime) + " - " + result + "\n")
+            highScorePathWrite.close()
+
+
+            # Start a new game
             ultility.Mbox('Results', text, 1)
             pygame.time.delay(500)
             ai = AIPlayer(2, COL, ROW, createPatternDict())
@@ -294,10 +310,12 @@ def subStart():
                 if (backButton.isOver(pos)):
                     mainMenu()
                 if (startButton.isOver(pos)):
-                    name = nameInput.text
-                    startTime = datetime.datetime.now()
-                    print(name)
-                    print(startTime)
+                    global userName
+                    if (nameInput.text == "Fill in your name"):
+                        userName = "Unknown Player"
+                    else:
+                        userName = nameInput.text
+                    startTime = datetime.now()
                     main(AITurn, size)
 
             if event.type == pygame.MOUSEMOTION:
@@ -344,10 +362,6 @@ def highScore():
     screen = pygame.display.set_mode((700, 700))
     screen.fill(black)
     wide, high= pygame.display.get_surface().get_size()
-
-    # Write to File
-    highScorePathWrite = open('High Scores.txt', "a")
-    highScorePathWrite.close()
 
     # Read File
     highScorePathRead = open('High Scores.txt', 'r')
