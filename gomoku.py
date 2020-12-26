@@ -174,8 +174,8 @@ def main(AITurn, size = 15):
                         result = "Lost"
             # Write to File
             highScorePathWrite = open('High Scores.txt', "a")
-            endTime = datetime.now()
-            highScorePathWrite.writelines(userName + " - " + str(endTime - startTime) + " - " + result + "\n")
+            endTime = datetime.now().replace(microsecond=0)
+            highScorePathWrite.writelines(userName + " - " + str((endTime - startTime)) + " - " + result + "\n")
             highScorePathWrite.close()
 
 
@@ -315,7 +315,7 @@ def subStart():
                         userName = "Unknown Player"
                     else:
                         userName = nameInput.text
-                    startTime = datetime.now()
+                    startTime = datetime.now().replace(microsecond=0)
                     main(AITurn, size)
 
             if event.type == pygame.MOUSEMOTION:
@@ -381,9 +381,17 @@ def highScore():
     backButton.draw(screen, white)
     pygame.display.update()
 
-    # Write high scores from txt file
+    # Sort High Score List
+    highScoreList = []
     for line in lines:
         line = line.strip()
+        lineList = line.split(" - ")
+        highScoreList.append(lineList)
+    highScoreList = sorted(highScoreList, key=lambda x: (x[2], x[1], x[0]))
+
+    # Write high scores from txt file
+    for elem in highScoreList[::-1]:
+        line = " - ".join(elem)
         font = pygame.font.SysFont('Times New Roman', 25)
         textWidth, textHeight = font.size(line)
         playerInfo = font.render(line, False, white)
