@@ -85,3 +85,25 @@ class Board(object):
                 else:
                     text = font.render('', True, (0, 0, 0))
                 surface.blit(text, (k * size + xMargin + 10, l * size + yMargin - 10))
+    
+    def displayHint(self, surface):
+        self.aiplayer.miniMax(self.status, self.bound, self.value, self.aiplayer.depth, -math.inf, math.inf, not self.initTurn)
+        recMove_x = self.aiplayer.nextMove[0]
+        recMove_y = self.aiplayer.nextMove[1]
+        font = pygame.font.SysFont('arial', 40)
+        for i in range(0, 10):
+            self.status[recMove_x][recMove_y] = -1 if self.initTurn else 1
+            if self.status[recMove_x][recMove_y] == 1:
+                text = font.render('x', True, (255, 0, 0))
+            elif self.status[recMove_x][recMove_y] == -1:
+                text = font.render('o', True, (255, 0, 0))
+            surface.blit(text, (recMove_x * size + xMargin + 10, recMove_y * size + yMargin - 10))
+            pygame.display.update()
+            pygame.time.delay(50)
+            self.status[recMove_x][recMove_y] = 0
+            self.draw(surface)
+            pygame.display.update()
+        
+        
+        
+

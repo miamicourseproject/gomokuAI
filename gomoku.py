@@ -117,8 +117,13 @@ def main(AITurn, size = 15):
     key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
     
     # Draw buttons
-    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 2, high / 8, "Back")
+    # Back button
+    backButton = button(gray, wide / 4 , 7 * high / 8 - 20, wide / 4, high / 8, "Back")
     backButton.draw(screen, white) 
+
+    # Hint button
+    hintButton = button(gray, wide / 2 , 7 * high / 8 - 20, wide / 4, high / 8, "Hint")
+    hintButton.draw(screen, white) 
 
     # Main loop
     while True:
@@ -129,6 +134,7 @@ def main(AITurn, size = 15):
         screen.fill(black)
         key.draw(screen)
         backButton.draw(screen, white)
+        hintButton.draw(screen, white)
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -138,6 +144,8 @@ def main(AITurn, size = 15):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if (backButton.isOver(pos)):
                     subStart()
+                if (hintButton.isOver(pos)):
+                    key.displayHint(screen)
                 # Update the board after clicked 
                 key.listen(pos)
                 screen.fill(black)
@@ -150,6 +158,10 @@ def main(AITurn, size = 15):
                     backButton.color = lessGray
                 else:
                     backButton.color = gray
+                if (hintButton.isOver(pos)):
+                    hintButton.color = lessGray
+                else:
+                    hintButton.color = gray
         
         # Check Win or Check Draw
         if ultility.checkWin(key.value) or ultility.checkTie(key):
