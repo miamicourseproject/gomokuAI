@@ -31,8 +31,6 @@ result = ""
 startTime = datetime.now()
 endTime = datetime.now()
 
-
-
 # Color code
 white = (255,255,255)
 black = (30,30,30)
