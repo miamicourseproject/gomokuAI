@@ -3,7 +3,6 @@ import math
 import random
 import pygame
 import sys
-import ctypes
 import datetime
 from pygame.locals import *
 from datetime import datetime
@@ -190,7 +189,7 @@ def main(AITurn, size = 15):
             highScorePathWrite.close()
 
             # Start a new game
-            ultility.Mbox('Results', text, 1)
+            ultility.alertBox("Result", text)
             pygame.time.delay(500)
             ai = AIPlayer(2, COL, ROW, createPatternDict())
             iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
