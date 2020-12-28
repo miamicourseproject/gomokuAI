@@ -148,6 +148,7 @@ def main(AITurn, size = 15):
                 key.listen(pos)
                 screen.fill(black)
                 backButton.draw(screen, white)
+                hintButton.draw(screen, white)
                 key.draw(screen)
                 pygame.display.update()
 
