@@ -37,9 +37,9 @@ python -m pip install --upgrade pip
 ```
 pip install pygame
 ```
-### Option 2: Directly download from Google Drive
+### Option 2: Directly download from DropBox
 You should try this option if you just want to experience the game. 
-<br />Here is the link to download: [Link](https://drive.google.com/file/d/1QNKrWpCdhdujqe9XKZXQLPvmWshIDUWU/view?usp=sharing).
+<br />Here is the link to download: [Link](https://www.dropbox.com/s/89kuy8fn8mvy8za/GomokuAI.rar?dl=0).
 ___
 ## Credits
 * Our evaluation algorithm is based on this research paper on gomoku: https://linyanghe.github.io/projects/resources/Gomuku.pdf.
