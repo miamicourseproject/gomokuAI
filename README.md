@@ -19,7 +19,7 @@ ___
 ## How to install
 ### Option 1: Cloning from repo
 You may want to try this option if you would like to have a deeper look into our code (and maybe play with it a bit). In order to do this, I would suggest you install Python and the Pygame libraries for the program to run:
-* Python:
+* Python Installation:
 <br />Install the lastest version of Python from this link: [Python Download](https://www.python.org/downloads/)
 
 * Pip install/update:
@@ -33,7 +33,7 @@ For Windows:
 python -m pip install --upgrade pip
 ```
 
-* Pygame
+* Pygame Installation:
 ```
 pip install pygame
 ```
