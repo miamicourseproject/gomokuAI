@@ -17,7 +17,8 @@ ___
 ![alt text](https://github.com/miamicourseproject/gomokuAI/blob/master/Images/Game%20Screen.PNG)
 ___
 ## Credits
-Our evaluation algorithm is based on this research paper on gomoku: https://linyanghe.github.io/projects/resources/Gomuku.pdf.
+* Our evaluation algorithm is based on this research paper on gomoku: https://linyanghe.github.io/projects/resources/Gomuku.pdf.
 We would like to thank to author of this paper for such useful information, which enable us to give our bot the ability to plan wisely ahead of time.
 ___
 ## License
+gomokuAI is [MIT Licensed](https://github.com/miamicourseproject/gomokuAI/blob/master/LICENSE).
