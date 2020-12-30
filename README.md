@@ -37,6 +37,9 @@ python -m pip install --upgrade pip
 ```
 pip install pygame
 ```
+### Option 2: Directly download from Google Drive
+You should try this option if you just want to experience the game. 
+<br />Here is the link to download: [Link](https://drive.google.com/file/d/1-jFLkUNnRHZsTzfjb_t_borkCWo_P4EG/view?usp=sharing).
 ___
 ## Credits
 * Our evaluation algorithm is based on this research paper on gomoku: https://linyanghe.github.io/projects/resources/Gomuku.pdf.
