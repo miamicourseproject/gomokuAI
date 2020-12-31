@@ -34,11 +34,13 @@ For Windows:
 ```
 python -m pip install --upgrade pip
 ```
-After cloning the repo, run gomoku.py file to try the game.
+
 * Pygame Installation:
 ```
 pip install pygame
 ```
+After cloning the repo, run gomoku.py file to try the game.
+
 ### Option 2: Directly download the executed version from DropBox
 You should try this option if you just want to experience the game. 
 <br />Here is the link to download: [Link](https://www.dropbox.com/s/89kuy8fn8mvy8za/GomokuAI.rar?dl=0).
