@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Linh Winning - 0:07:36.611217 - Lost
 Test Victory 2 - 0:01:52.611217 - Lost
 Jason - 0:00:34.544267 - Lost
@@ -9,3 +10,5 @@ Test Victory - 0:00:32.611217 - Lost
 Jason - 0:00:34.544267 - Tie
 Jason - 0:00:34.544267 - Tie
 hieu - 0:00:14.207320 - Lost
+=======
+>>>>>>> c7ce9eef6b5d8875523087850966cb80ef247e93

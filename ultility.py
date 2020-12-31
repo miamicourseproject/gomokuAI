@@ -1,10 +1,14 @@
 import numpy as np
 import ctypes
+from tkinter import *
+from tkinter import messagebox
 # this class includes help methods that can be used globally
 class ultility:
     @staticmethod
-    def Mbox(title, text, style):
-        return ctypes.windll.user32.MessageBoxW(0, text, title, style)
+    def alertBox(title, text):
+        # Hide the main window
+        Tk().wm_withdraw() 
+        return messagebox.showinfo(title,text)
 
     @staticmethod
     def checkInBound(col1, row1, COL, ROW):

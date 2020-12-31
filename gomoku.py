@@ -3,7 +3,6 @@ import math
 import random
 import pygame
 import sys
-import ctypes
 import datetime
 from pygame.locals import *
 from datetime import datetime
@@ -30,8 +29,6 @@ userName = ""
 result = ""
 startTime = datetime.now()
 endTime = datetime.now()
-
-
 
 # Color code
 white = (255,255,255)
@@ -150,6 +147,7 @@ def main(AITurn, size = 15):
                 key.listen(pos)
                 screen.fill(black)
                 backButton.draw(screen, white)
+                hintButton.draw(screen, white)
                 key.draw(screen)
                 pygame.display.update()
 
@@ -191,7 +189,7 @@ def main(AITurn, size = 15):
             highScorePathWrite.close()
 
             # Start a new game
-            ultility.Mbox('Results', text, 1)
+            ultility.alertBox("Result", text)
             pygame.time.delay(500)
             ai = AIPlayer(2, COL, ROW, createPatternDict())
             iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
