@@ -108,7 +108,7 @@ def main(AITurn, size = 15):
     wide, high = pygame.display.get_surface().get_size()
 
     # Initiate the game
-    ai = AIPlayer(2, COL, ROW, createPatternDict())
+    ai = AIPlayer(3, COL, ROW, createPatternDict())
     global iniStatus, key
     iniStatus = [[0 for x in range(COL)] for y in range(ROW)]
     key = Board(AITurn, iniStatus, 0, COL, ROW, ai, createPatternDict())
@@ -207,8 +207,8 @@ def credit():
     wide, high = pygame.display.get_surface().get_size()
 
     # Credit Text
-    creditForTeam = "This Project is made by Duc Nam, Hieu Phan and Thomas Nguyen"
-    creditForBackEnd = "Algorithms + Game Logic: Duc Nam and Hieu Phan"
+    creditForTeam = "This Project is made by Thomas Nguyen, Duc Nam and Hieu Phan"
+    creditForBackEnd = "Algorithms + Game Logic: Thomas Nguyen, Duc Nam and Hieu Phan"
     creditForFrontEnd = "UI/ Design: Thomas Nguyen"
 
     # Buttons

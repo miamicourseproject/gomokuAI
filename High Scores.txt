@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-Linh Winning - 0:07:36.611217 - Lost
-Test Victory 2 - 0:01:52.611217 - Lost
-Jason - 0:00:34.544267 - Lost
-Jason - 0:00:34.544267 - Lost
-Jason - 0:00:34.544267 - Lost
-Jason - 0:00:34.544267 - Lost
-Jason - 0:00:34.544267 - Lost
-Test Victory - 0:00:32.611217 - Lost
-Jason - 0:00:34.544267 - Tie
-Jason - 0:00:34.544267 - Tie
-hieu - 0:00:14.207320 - Lost
-=======
->>>>>>> c7ce9eef6b5d8875523087850966cb80ef247e93
+Unknown Player - 0:00:12.945541 - Tie
+My Name - 0:00:19.729510 - Lost
+Thomas - 0:00:38.729510 - Tie
+Thomas - 0:00:56.729510 - Lost
+My Name - 0:00:30.083668 - Lost
+Unknown Player - 0:00:18.035268 - Lost
+Rivian - 0:00:31.078328 - Lost
+Thomas - 0:01:59.887361 - Lost
